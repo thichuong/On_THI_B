@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ôn Thi Sát Hạch GPLX 600 Câu (2025) - Cục CSGT</title>
+  <meta name="description" content="Ứng dụng luyện thi lý thuyết sát hạch lái xe ô tô / mô tô 600 câu hỏi mới nhất năm 2025. Tạo đề 30 câu chuẩn có câu điểm liệt, bấm giờ, chấm điểm tự động." />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/src/styles/main.css" />
+</head>
+<body>
+  <!-- Header Navbar -->
+  <header class="app-header">
+    <div class="brand-container">
+      <div class="brand-logo">🚗</div>
+      <div class="brand-info">
+        <h1>Ôn Thi Sát Hạch 600 Câu</h1>
+        <p>Bộ câu hỏi Luật TTATGTĐB 2025 (Cục CSGT)</p>
+      </div>
+    </div>
+
+    <!-- Navigation Modes -->
+    <nav class="nav-tabs" aria-label="Chế độ học">
+      <button class="tab-btn active" data-mode="exam">
+        <span>📝 Thi Thử (30 Câu)</span>
+      </button>
+      <button class="tab-btn" data-mode="critical">
+        <span>⚠️ 60 Câu Điểm Liệt</span>
+      </button>
+      <button class="tab-btn" data-mode="chapter">
+        <span>📚 Ôn Theo Chương</span>
+      </button>
+      <button class="tab-btn" data-mode="all">
+        <span>🔍 Tra Cứu 600 Câu</span>
+      </button>
+      <button class="tab-btn" data-mode="mistakes">
+        <span>❌ Câu Hay Sai</span>
+      </button>
+      <button class="tab-btn" data-mode="bookmarks">
+        <span>⭐ Đã Lưu</span>
+      </button>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <button id="theme-toggle-btn" class="theme-toggle-btn" title="Chuyển đổi Giao diện Sáng / Tối" aria-label="Toggle Theme">
+        <span id="theme-icon">☀️</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Dynamic Content Container -->
+  <main id="app-main" class="app-container">
+    <!-- Dynamic Views will render here via main.js -->
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <p>© 2025 Ứng dụng Ôn thi Sát hạch Lái xe 600 Câu Hỏi. Biên soạn theo tài liệu Cục Cảnh sát giao thông & Luật Trật tự, ATGT đường bộ.</p>
+  </footer>
+
+  <!-- Result Modal -->
+  <div id="result-modal" class="modal-backdrop" aria-hidden="true" role="dialog">
+    <!-- Content injected by main.js -->
+  </div>
+
+  <!-- Lightbox Zoom Modal -->
+  <div id="lightbox-modal" class="modal-backdrop lightbox-modal" aria-hidden="true" role="dialog">
+    <div class="modal-content">
+      <img id="lightbox-img" class="lightbox-img" src="" alt="Hình phóng to" />
+      <button id="close-lightbox-btn" class="btn-nav btn-primary" style="margin-top: 1rem;">
+        ✕ Đóng Xem Lại
+      </button>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

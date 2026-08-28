@@ -143,37 +143,40 @@ def main():
     
     for idx, qid in enumerate(sorted_q_ids):
         q = questions[qid]
-        pno = q['pages'][0]
-        page = doc[pno]
-        imgs_on_page = page_img_map.get(pno, [])
-        
-        if not imgs_on_page:
-            continue
+        for pno in q['pages']:
+            page = doc[pno]
+            imgs_on_page = page_img_map.get(pno, [])
             
-        q_start_y = q['start_line']['rect'].y0
-        next_q_y = 9999
-        if idx + 1 < len(sorted_q_ids):
-            next_q = questions[sorted_q_ids[idx + 1]]
-            if next_q['pages'][0] == pno:
-                next_q_y = next_q['start_line']['rect'].y0
-        
-        matched_imgs = []
-        for img_info in imgs_on_page:
-            img_rect = pymupdf.Rect(img_info['bbox'])
-            img_mid_y = (img_rect.y0 + img_rect.y1) / 2
-            if q_start_y - 10 <= img_mid_y < next_q_y:
-                matched_imgs.append(img_rect)
-        
-        if matched_imgs:
-            combined_rect = matched_imgs[0]
-            for mr in matched_imgs[1:]:
-                combined_rect = combined_rect | mr
+            if not imgs_on_page:
+                continue
+                
+            q_start_y = q['start_line']['rect'].y0 if pno == q['pages'][0] else 0
+            next_q_y = 9999
+            for next_qid in sorted_q_ids[idx + 1:]:
+                next_q = questions[next_qid]
+                if next_q['pages'][0] == pno:
+                    next_q_y = next_q['start_line']['rect'].y0
+                    break
+                elif next_q['pages'][0] > pno:
+                    break
             
-            pix = page.get_pixmap(clip=combined_rect, dpi=180)
-            img_filename = f"cau_{qid}.png"
-            img_filepath = os.path.join(output_dir, img_filename)
-            pix.save(img_filepath)
-            q['image_path'] = f"images/{img_filename}"
+            matched_imgs = []
+            for img_info in imgs_on_page:
+                img_rect = pymupdf.Rect(img_info['bbox'])
+                img_mid_y = (img_rect.y0 + img_rect.y1) / 2
+                if q_start_y - 10 <= img_mid_y < next_q_y:
+                    matched_imgs.append(img_rect)
+            
+            if matched_imgs:
+                combined_rect = matched_imgs[0]
+                for mr in matched_imgs[1:]:
+                    combined_rect = combined_rect | mr
+                
+                pix = page.get_pixmap(clip=combined_rect, dpi=180)
+                img_filename = f"cau_{qid}.png"
+                img_filepath = os.path.join(output_dir, img_filename)
+                pix.save(img_filepath)
+                q['image_path'] = f"images/{img_filename}"
 
     # Manual adjustments for edge cases
     if 204 in questions and not questions[204]['correct_options']:

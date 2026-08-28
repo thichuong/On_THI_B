@@ -751,7 +751,7 @@ function renderAllQuestionsView() {
       <select id="filter-type-select" class="filter-select">
         <option value="all" ${state.filterType === 'all' ? 'selected' : ''}>Tất cả câu hỏi (600 câu)</option>
         <option value="critical" ${state.filterType === 'critical' ? 'selected' : ''}>⚠️ 60 Câu điểm liệt</option>
-        <option value="with_image" ${state.filterType === 'with_image' ? 'selected' : ''}>🖼️ Câu có hình ảnh (317 câu)</option>
+        <option value="with_image" ${state.filterType === 'with_image' ? 'selected' : ''}>🖼️ Câu có hình ảnh (${state.allQuestions.filter(q => q.image).length} câu)</option>
       </select>
 
       <div style="font-size: 0.875rem; color: var(--text-secondary); font-weight: 600;">

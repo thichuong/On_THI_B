@@ -173,8 +173,8 @@ function startTimer() {
 
     if (state.timerSeconds <= 0) {
       clearInterval(state.timerInterval);
-      alert(`⏰ Đã hết thời gian làm bài thi (${preset.durationMinutes} phút)! Hệ thống sẽ tự động nộp bài.`);
-      submitExam();
+      state.timerInterval = null;
+      finalizeExamSubmission();
     }
   }, 1000);
 }
@@ -213,18 +213,56 @@ function submitExam() {
 
   const answeredCount = Object.keys(state.userAnswers).length;
   const total = state.examQuestions.length;
-  const preset = EXAM_PRESETS[state.examType] || EXAM_PRESETS.standard;
 
   if (state.timerSeconds > 0 && answeredCount < total) {
     const unattempted = total - answeredCount;
-    const confirmSubmit = confirm(`Bạn còn ${unattempted} câu chưa trả lời. Bạn có chắc chắn muốn nộp bài thi không?`);
-    if (!confirmSubmit) return;
+    showConfirmSubmitModal(unattempted);
+    return;
   }
+
+  finalizeExamSubmission();
+}
+
+function showConfirmSubmitModal(unattempted) {
+  elements.resultModal.innerHTML = `
+    <div class="modal-content" style="max-width: 440px;">
+      <div style="font-size: 3rem;">⚠️</div>
+      <h2 style="font-size: 1.25rem; font-weight: 700; color: var(--warning);">Bạn còn ${unattempted} câu chưa trả lời</h2>
+      <p class="result-message" style="margin: 0.5rem 0;">
+        Các câu hỏi chưa làm sẽ được tính là sai. Bạn có chắc chắn muốn nộp bài thi ngay bây giờ?
+      </p>
+      <div class="modal-actions" style="margin-top: 1rem;">
+        <button class="btn-nav" id="btn-cancel-submit" style="flex: 1;">
+          ✏️ Làm Tiếp
+        </button>
+        <button class="btn-nav btn-primary" id="btn-confirm-submit" style="flex: 1; background: var(--danger); border-color: var(--danger);">
+          📤 Nộp Bài Luôn
+        </button>
+      </div>
+    </div>
+  `;
+
+  elements.resultModal.classList.add('show');
+
+  document.getElementById('btn-cancel-submit')?.addEventListener('click', () => {
+    elements.resultModal.classList.remove('show');
+  });
+
+  document.getElementById('btn-confirm-submit')?.addEventListener('click', () => {
+    elements.resultModal.classList.remove('show');
+    finalizeExamSubmission();
+  });
+}
+
+function finalizeExamSubmission() {
+  if (state.isExamSubmitted) return;
 
   if (state.timerInterval) {
     clearInterval(state.timerInterval);
     state.timerInterval = null;
   }
+
+  const preset = EXAM_PRESETS[state.examType] || EXAM_PRESETS.standard;
 
   state.isExamSubmitted = true;
   state.isReviewMode = true;

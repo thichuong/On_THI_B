@@ -1,21 +1,66 @@
 /**
  * Exam Engine: Generates balanced mock exams with guaranteed critical questions,
- * handles shuffling, timer state, and official grading logic.
+ * handles presets (50 questions in 33 mins / 20 questions in 10 mins), shuffling,
+ * timer state, and official grading logic.
  */
+
+export const EXAM_PRESETS = {
+  standard: {
+    key: 'standard',
+    name: 'Thi Thử Chuẩn (50 Câu / 33 Phút)',
+    shortName: 'Thi Thử Chuẩn (50 Câu)',
+    totalQuestions: 50,
+    durationMinutes: 33,
+    durationSeconds: 33 * 60,
+    passThreshold: 45,
+    minCritical: 1,
+    maxCritical: 2,
+    chapterQuotas: {
+      1: 14, // Quy định chung & quy tắc
+      2: 2,  // Văn hóa & đạo đức
+      3: 4,  // Kỹ thuật lái xe
+      4: 2,  // Cấu tạo & sửa chữa
+      5: 16, // Biển báo
+      6: 11  // Sa hình
+    }
+  },
+  quick: {
+    key: 'quick',
+    name: 'Thi Nhanh (20 Câu / 10 Phút)',
+    shortName: 'Thi Nhanh (20 Câu)',
+    totalQuestions: 20,
+    durationMinutes: 10,
+    durationSeconds: 10 * 60,
+    passThreshold: 18,
+    minCritical: 1,
+    maxCritical: 1,
+    chapterQuotas: {
+      1: 5,  // Quy định chung & quy tắc
+      2: 1,  // Văn hóa & đạo đức
+      3: 2,  // Kỹ thuật lái xe
+      4: 1,  // Cấu tạo & sửa chữa
+      5: 6,  // Biển báo
+      6: 4   // Sa hình
+    }
+  }
+};
 
 export class ExamEngine {
   /**
-   * Generates a 30-question mock test from the full dataset.
-   * Guarantees at least 1-2 critical questions and balances topics across 6 chapters.
+   * Generates a balanced mock test according to the specified preset.
    *
    * @param {Array} allQuestions Full list of 600 questions
+   * @param {string} examType 'standard' (50 questions) | 'quick' (20 questions)
    * @param {Object} options Configuration options
-   * @returns {Array} Array of 30 questions for the exam
+   * @returns {Array} Array of questions prepared for the exam
    */
-  static generate30QuestionExam(allQuestions, options = {}) {
+  static generateExam(allQuestions, examType = 'standard', options = {}) {
+    const preset = EXAM_PRESETS[examType] || EXAM_PRESETS.standard;
     const {
-      minCritical = 1,
-      maxCritical = 2,
+      totalQuestions = preset.totalQuestions,
+      minCritical = preset.minCritical,
+      maxCritical = preset.maxCritical,
+      chapterQuotas = preset.chapterQuotas,
       shuffleQuestions = true,
       shuffleOptions = false
     } = options;
@@ -26,39 +71,31 @@ export class ExamEngine {
 
     // Group non-critical by chapter
     const byChapter = {
-      1: nonCriticalQuestions.filter(q => q.chapter === 1), // Luật & Quy tắc
-      2: nonCriticalQuestions.filter(q => q.chapter === 2), // Văn hóa & Đạo đức
-      3: nonCriticalQuestions.filter(q => q.chapter === 3), // Kỹ thuật lái xe
-      4: nonCriticalQuestions.filter(q => q.chapter === 4), // Cấu tạo & Sửa chữa
-      5: nonCriticalQuestions.filter(q => q.chapter === 5), // Biển báo
-      6: nonCriticalQuestions.filter(q => q.chapter === 6), // Sa hình
+      1: nonCriticalQuestions.filter(q => q.chapter === 1),
+      2: nonCriticalQuestions.filter(q => q.chapter === 2),
+      3: nonCriticalQuestions.filter(q => q.chapter === 3),
+      4: nonCriticalQuestions.filter(q => q.chapter === 4),
+      5: nonCriticalQuestions.filter(q => q.chapter === 5),
+      6: nonCriticalQuestions.filter(q => q.chapter === 6)
     };
 
-    // 1. Pick 1 or 2 critical questions randomly
+    // 1. Pick critical questions randomly (at least minCritical)
     const criticalCount = Math.floor(Math.random() * (maxCritical - minCritical + 1)) + minCritical;
     const shuffledCritical = this.shuffleArray([...criticalQuestions]);
     const selectedCritical = shuffledCritical.slice(0, criticalCount);
     const selectedIds = new Set(selectedCritical.map(q => q.id));
 
-    // 2. Desired distribution for remaining (30 - criticalCount) questions:
-    // Chapter 1: ~7 questions
-    // Chapter 2: ~1 question
-    // Chapter 3: ~2 questions
-    // Chapter 4: ~1 question
-    // Chapter 5: ~10 questions
-    // Chapter 6: ~8 questions
-    // Total: 29 + 1 critical = 30
-    const chapterQuotas = {
-      1: 7 - (selectedCritical.filter(q => q.chapter === 1).length),
-      2: 1,
-      3: 2,
-      4: 1,
-      5: 10,
-      6: 8
-    };
+    // 2. Distribute remaining questions across chapters
+    const adjustedQuotas = { ...chapterQuotas };
+    // Adjust chapter 1 or others if critical question belonged there
+    selectedCritical.forEach(cq => {
+      if (adjustedQuotas[cq.chapter] !== undefined) {
+        adjustedQuotas[cq.chapter] = Math.max(0, adjustedQuotas[cq.chapter] - 1);
+      }
+    });
 
     let selectedOthers = [];
-    for (const [ch, quota] of Object.entries(chapterQuotas)) {
+    for (const [ch, quota] of Object.entries(adjustedQuotas)) {
       const pool = byChapter[ch] || [];
       const available = pool.filter(q => !selectedIds.has(q.id));
       const shuffledPool = this.shuffleArray([...available]);
@@ -70,19 +107,22 @@ export class ExamEngine {
       });
     }
 
-    // Fill any gap to ensure exact 30 questions
-    let totalNeeded = 30 - (selectedCritical.length + selectedOthers.length);
+    // Fill any gap to ensure exact totalQuestions count
+    let totalNeeded = totalQuestions - (selectedCritical.length + selectedOthers.length);
     if (totalNeeded > 0) {
       const remainingPool = nonCriticalQuestions.filter(q => !selectedIds.has(q.id));
       const extra = this.shuffleArray([...remainingPool]).slice(0, totalNeeded);
-      selectedOthers.push(...extra);
+      extra.forEach(q => {
+        selectedOthers.push(q);
+        selectedIds.add(q.id);
+      });
     }
 
     let examSet = [...selectedCritical, ...selectedOthers];
 
-    // Guarantee exact 30 questions
-    if (examSet.length > 30) {
-      examSet = examSet.slice(0, 30);
+    // Guarantee exact total count
+    if (examSet.length > totalQuestions) {
+      examSet = examSet.slice(0, totalQuestions);
     }
 
     // Shuffle the order of questions in the exam if enabled
@@ -99,7 +139,6 @@ export class ExamEngine {
 
       if (shuffleOptions) {
         // Shuffle options and update correct_option index
-        const originalCorrectText = q.options[q.correct_option - 1];
         const indexedOptions = q.options.map((opt, i) => ({ text: opt, isCorrect: i + 1 === q.correct_option }));
         const shuffled = this.shuffleArray(indexedOptions);
         examQ.options = shuffled.map(o => o.text);
@@ -111,14 +150,41 @@ export class ExamEngine {
   }
 
   /**
+   * Generates a 50-question mock test (33 minutes standard).
+   */
+  static generate50QuestionExam(allQuestions, options = {}) {
+    return this.generateExam(allQuestions, 'standard', options);
+  }
+
+  /**
+   * Generates a 20-question quick test (10 minutes quick mode).
+   */
+  static generate20QuestionExam(allQuestions, options = {}) {
+    return this.generateExam(allQuestions, 'quick', options);
+  }
+
+  /**
+   * Backward compatibility alias
+   */
+  static generate30QuestionExam(allQuestions, options = {}) {
+    return this.generateExam(allQuestions, 'standard', options);
+  }
+
+  /**
    * Grades the exam and determines PASS / FAIL with critical failure check.
    *
-   * @param {Array} examQuestions 30 questions in the test
+   * @param {Array} examQuestions Questions in the test
    * @param {Object} userAnswers Map of { [questionId]: selectedOptionIndex }
-   * @param {number} passThreshold Minimum score to pass (default: 26 for 30 questions)
+   * @param {number|null} passThreshold Minimum score to pass (defaults based on question count)
    * @returns {Object} Grading summary
    */
-  static gradeExam(examQuestions, userAnswers, passThreshold = 26) {
+  static gradeExam(examQuestions, userAnswers, passThreshold = null) {
+    const total = examQuestions.length;
+    // Default pass thresholds: 45/50 for 50-question, 18/20 for 20-question, or 90%
+    const resolvedThreshold = passThreshold !== null
+      ? passThreshold
+      : (total === 50 ? 45 : (total === 20 ? 18 : Math.ceil(total * 0.9)));
+
     let correctCount = 0;
     let wrongCount = 0;
     let unattemptedCount = 0;
@@ -167,20 +233,20 @@ export class ExamEngine {
       });
     });
 
-    const passed = (correctCount >= passThreshold) && !failedCritical;
+    const passed = (correctCount >= resolvedThreshold) && !failedCritical;
 
     return {
-      total: examQuestions.length,
+      total,
       score: correctCount,
       wrongCount,
       unattemptedCount,
-      passThreshold,
+      passThreshold: resolvedThreshold,
       passed,
       failedCritical,
       failedCriticalQuestions,
       wrongQuestionIds,
       questionResults,
-      percentage: Math.round((correctCount / examQuestions.length) * 100)
+      percentage: Math.round((correctCount / total) * 100)
     };
   }
 

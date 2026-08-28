@@ -803,6 +803,27 @@ input, select {
   gap: 0.5rem;
 }
 
+.palette-grid.palette-grid-50 {
+  gap: 0.375rem;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+  scrollbar-width: thin;
+}
+
+.palette-grid.palette-grid-50::-webkit-scrollbar {
+  width: 5px;
+}
+
+.palette-grid.palette-grid-50::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.palette-grid.palette-grid-50 .palette-btn {
+  font-size: 0.8125rem;
+}
+
 .palette-btn {
   aspect-ratio: 1;
   border-radius: var(--radius-md);

@@ -1,11 +1,12 @@
-import { ExamEngine } from './exam_engine.js';
+import { ExamEngine, EXAM_PRESETS } from './exam_engine.js';
 import { Storage } from './storage.js';
 import questionsData from './data/questions.json';
 
 // App State
 const state = {
   allQuestions: questionsData,
-  currentMode: 'exam', // 'exam', 'critical', 'chapter', 'all', 'mistakes', 'bookmarks'
+  currentMode: 'exam', // 'exam', 'quick-exam', 'critical', 'chapter', 'all', 'mistakes', 'bookmarks'
+  examType: 'standard', // 'standard' (50 câu / 33 phút) | 'quick' (20 câu / 10 phút)
   
   // Mock Exam State
   examQuestions: [],
@@ -14,7 +15,8 @@ const state = {
   isExamSubmitted: false,
   isReviewMode: false,
   examResult: null,
-  timerSeconds: 20 * 60, // 20 minutes
+  timerSeconds: EXAM_PRESETS.standard.durationSeconds, // 33 minutes default
+  examTotalSeconds: EXAM_PRESETS.standard.durationSeconds,
   timerInterval: null,
 
   // Practice / Explorer State
@@ -53,8 +55,8 @@ function initApp() {
   setupEventListeners();
   setupKeyboardShortcuts();
   
-  // Start with a fresh 30-question Mock Exam
-  startNewExam();
+  // Start with a fresh 50-question Standard Mock Exam (33 mins)
+  startNewExam('standard');
 }
 
 // Theme handling
@@ -86,8 +88,14 @@ function switchMode(newMode) {
   });
 
   if (newMode === 'exam') {
-    if (state.examQuestions.length === 0) {
-      startNewExam();
+    if (state.examQuestions.length === 0 || state.examType !== 'standard') {
+      startNewExam('standard');
+    } else {
+      renderExamView();
+    }
+  } else if (newMode === 'quick-exam') {
+    if (state.examQuestions.length === 0 || state.examType !== 'quick') {
+      startNewExam('quick');
     } else {
       renderExamView();
     }
@@ -119,16 +127,19 @@ function switchMode(newMode) {
 // EXAM ENGINE LOGIC & TIMERS
 // ==========================================================================
 
-function startNewExam() {
+function startNewExam(examType = 'standard') {
   // Clear any active timer
   if (state.timerInterval) {
     clearInterval(state.timerInterval);
     state.timerInterval = null;
   }
 
-  state.examQuestions = ExamEngine.generate30QuestionExam(state.allQuestions, {
-    minCritical: 1,
-    maxCritical: 2,
+  state.examType = examType;
+  const preset = EXAM_PRESETS[examType] || EXAM_PRESETS.standard;
+
+  state.examQuestions = ExamEngine.generateExam(state.allQuestions, examType, {
+    minCritical: preset.minCritical,
+    maxCritical: preset.maxCritical,
     shuffleQuestions: true
   });
   state.currentExamIndex = 0;
@@ -136,7 +147,8 @@ function startNewExam() {
   state.isExamSubmitted = false;
   state.isReviewMode = false;
   state.examResult = null;
-  state.timerSeconds = 20 * 60; // 20:00 minutes
+  state.timerSeconds = preset.durationSeconds;
+  state.examTotalSeconds = preset.durationSeconds;
 
   startTimer();
   renderExamView();
@@ -144,6 +156,8 @@ function startNewExam() {
 
 function startTimer() {
   if (state.timerInterval) clearInterval(state.timerInterval);
+  const preset = EXAM_PRESETS[state.examType] || EXAM_PRESETS.standard;
+  
   state.timerInterval = setInterval(() => {
     if (state.isExamSubmitted) {
       clearInterval(state.timerInterval);
@@ -155,7 +169,7 @@ function startTimer() {
 
     if (state.timerSeconds <= 0) {
       clearInterval(state.timerInterval);
-      alert('⏰ Đã hết thời gian làm bài thi (20 phút)! Hệ thống sẽ tự động nộp bài.');
+      alert(`⏰ Đã hết thời gian làm bài thi (${preset.durationMinutes} phút)! Hệ thống sẽ tự động nộp bài.`);
       submitExam();
     }
   }, 1000);
@@ -195,6 +209,7 @@ function submitExam() {
 
   const answeredCount = Object.keys(state.userAnswers).length;
   const total = state.examQuestions.length;
+  const preset = EXAM_PRESETS[state.examType] || EXAM_PRESETS.standard;
 
   if (state.timerSeconds > 0 && answeredCount < total) {
     const unattempted = total - answeredCount;
@@ -211,15 +226,17 @@ function submitExam() {
   state.isReviewMode = true;
 
   // Grade exam
-  state.examResult = ExamEngine.gradeExam(state.examQuestions, state.userAnswers);
+  state.examResult = ExamEngine.gradeExam(state.examQuestions, state.userAnswers, preset.passThreshold);
 
   // Save history & track wrong questions
   Storage.saveExamResult({
+    examType: state.examType,
+    examTitle: preset.name,
     score: state.examResult.score,
     total: state.examResult.total,
     passed: state.examResult.passed,
     failedCritical: state.examResult.failedCritical,
-    durationSeconds: (20 * 60) - Math.max(0, state.timerSeconds),
+    durationSeconds: (state.examTotalSeconds || preset.durationSeconds) - Math.max(0, state.timerSeconds),
     wrongQuestionIds: state.examResult.wrongQuestionIds
   });
 
@@ -242,10 +259,17 @@ function renderExamView() {
   const isBookmarked = Storage.isBookmarked(q.id);
   const totalQuestions = state.examQuestions.length;
   const answeredCount = Object.keys(state.userAnswers).length;
+  const preset = EXAM_PRESETS[state.examType] || EXAM_PRESETS.standard;
 
   const minutes = Math.floor(state.timerSeconds / 60);
   const seconds = state.timerSeconds % 60;
   const timeStr = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+  const isQuick = state.examType === 'quick';
+  const examBadgeText = isQuick ? '⚡ THI NHANH (20 CÂU / 10 PHÚT)' : '📝 THI THỬ CHUẨN (50 CÂU / 33 PHÚT)';
+  const examBadgeStyle = isQuick
+    ? 'background: rgba(245, 158, 11, 0.2); color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);'
+    : 'background: rgba(99, 102, 241, 0.2); color: #818cf8; border-color: rgba(99, 102, 241, 0.4);';
 
   elements.appMain.innerHTML = `
     <div class="exam-layout">
@@ -253,6 +277,7 @@ function renderExamView() {
       <div class="question-card">
         <div class="question-header">
           <div class="question-meta">
+            <span class="badge badge-index" style="${examBadgeStyle}">${examBadgeText}</span>
             <span class="badge badge-index">Câu ${state.currentExamIndex + 1} / ${totalQuestions}</span>
             <span class="badge badge-chapter">Chương ${q.chapter}</span>
             ${q.is_critical ? `<span class="badge badge-critical">⚠️ CÂU ĐIỂM LIỆT</span>` : ''}
@@ -338,11 +363,11 @@ function renderExamView() {
 
           ${state.isExamSubmitted ? `
             <button class="btn-submit-exam" id="btn-retry-exam" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">
-              🔄 Thi Đề Mới (Trộn 30 câu)
+              🔄 Thi Đề Mới (Trộn ${totalQuestions} câu)
             </button>
           ` : `
             <button class="btn-submit-exam" id="btn-submit-test">
-              📤 Nộp Bài Thi Sát Hạch
+              📤 Nộp Bài Thi ${isQuick ? 'Nhanh' : 'Sát Hạch'}
             </button>
           `}
         </div>
@@ -350,11 +375,11 @@ function renderExamView() {
         <!-- Question Grid Palette -->
         <div class="sidebar-card">
           <div class="palette-header">
-            <span class="palette-title">Danh sách 30 câu</span>
+            <span class="palette-title">Danh sách ${totalQuestions} câu</span>
             <span class="palette-stats">Đã làm: ${answeredCount}/${totalQuestions}</span>
           </div>
 
-          <div class="palette-grid">
+          <div class="palette-grid ${totalQuestions > 30 ? 'palette-grid-50' : ''}">
             ${state.examQuestions.map((eq, idx) => {
               const ans = state.userAnswers[eq.id];
               const isCurrent = idx === state.currentExamIndex;
@@ -479,7 +504,7 @@ function attachExamEvents() {
   // Retry exam
   const retryBtn = document.getElementById('btn-retry-exam');
   if (retryBtn) {
-    retryBtn.addEventListener('click', startNewExam);
+    retryBtn.addEventListener('click', () => startNewExam(state.examType));
   }
 }
 
@@ -534,7 +559,7 @@ function renderPracticeView(title, customHeader = '') {
         <h2>Chưa có câu hỏi nào trong danh sách này</h2>
         <p>Hãy làm bài thi hoặc ôn tập các chương để lưu câu hỏi vào đây nhé!</p>
         <button class="btn-nav btn-primary" id="btn-back-to-exam" style="margin-top: 1rem;">
-          📝 Làm Đề Thi Thử 30 Câu
+          📝 Làm Đề Thi Thử 50 Câu
         </button>
       </div>
     `;
@@ -984,19 +1009,20 @@ function showResultModal() {
 
   const res = state.examResult;
   const isPassed = res.passed;
+  const preset = EXAM_PRESETS[state.examType] || EXAM_PRESETS.standard;
 
   let statusHtml = '';
   if (isPassed) {
     statusHtml = `
       <div class="result-status-badge passed">
-        <span>🎉 ĐẠT (CHÚC MỪNG)</span>
+        <span>🎉 ĐẠT (${preset.shortName.toUpperCase()})</span>
       </div>
       <p class="result-message">
-        Bạn đã hoàn thành xuất sắc bài thi sát hạch lý thuyết với <strong>${res.score}/${res.total}</strong> điểm!
+        Chúc mừng! Bạn đã hoàn thành xuất sắc bài thi với <strong>${res.score}/${res.total}</strong> điểm! (Yêu cầu đạt tối thiểu ${res.passThreshold}/${res.total} điểm).
       </p>
     `;
   } else {
-    let failReason = `Không đạt điểm chuẩn (${res.score}/${res.total} - yêu cầu tối thiểu ${res.passThreshold} điểm).`;
+    let failReason = `Chưa đủ điểm đạt chuẩn (${res.score}/${res.total} - yêu cầu tối thiểu ${res.passThreshold}/${res.total} điểm).`;
     if (res.failedCritical) {
       failReason = `❌ <strong>RỚT TRỰC TIẾP DO SAI CÂU ĐIỂM LIỆT!</strong><br/>Bạn đã trả lời sai câu điểm liệt bắt buộc (Câu ${res.failedCriticalQuestions.map(q => q.id).join(', ')}).`;
     }
@@ -1040,7 +1066,7 @@ function showResultModal() {
           🔍 Xem Lại Bài Thi Chi Tiết
         </button>
         <button class="btn-nav" id="btn-new-exam-modal">
-          🔄 Thi Đề Khác (Trộn 30 câu mới)
+          🔄 Thi Đề Khác (Trộn ${res.total} câu mới)
         </button>
       </div>
     </div>
@@ -1057,7 +1083,7 @@ function showResultModal() {
 
   document.getElementById('btn-new-exam-modal')?.addEventListener('click', () => {
     elements.resultModal.classList.remove('show');
-    startNewExam();
+    startNewExam(state.examType);
   });
 }
 
@@ -1105,7 +1131,7 @@ function setupKeyboardShortcuts() {
       return;
     }
 
-    if (state.currentMode === 'exam') {
+    if (['exam', 'quick-exam'].includes(state.currentMode)) {
       // 1, 2, 3, 4 to select options
       if (['1', '2', '3', '4'].includes(e.key)) {
         const optNum = Number(e.key);

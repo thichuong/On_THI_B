@@ -6,11 +6,16 @@
 
 ## 🌟 Tính Năng Nổi Bật
 
-- 📝 **Thi Thử Sát Hạch Chuẩn (30 câu / 20 phút)**:
-  - Tự động sinh đề ngẫu nhiên theo đúng cấu trúc tỉ lệ các chương và bắt buộc có câu điểm liệt.
-  - Bấm giờ làm bài đếm ngược thời gian thực.
-  - Chấm điểm tự động, phân loại kết quả **ĐẠT / KHÔNG ĐẠT**, cảnh báo nếu làm sai câu điểm liệt.
-  - Chế độ xem lại chi tiết từng câu kèm đáp án đúng/sai.
+- 📝 **Thi Thử Sát Hạch Chuẩn (50 câu / 33 phút)**:
+  - Tự động sinh đề ngẫu nhiên chuẩn tỉ lệ 6 chương và bắt buộc có 1-2 câu điểm liệt.
+  - Bấm giờ đếm ngược thời gian thực (33 phút / 1980 giây).
+  - Chấm điểm tự động chuẩn xác: Đạt từ 45/50 điểm trở lên và không sai câu điểm liệt.
+  - Chế độ xem lại chi tiết từng câu kèm lời giải thích và đáp án chuẩn.
+
+- ⚡ **Chế Độ Thi Nhanh (20 câu / 10 phút)**:
+  - Dành cho việc luyện phản xạ nhanh chóng mà không tốn nhiều thời gian.
+  - Tự động chọn 20 câu ngẫu nhiên cân đối các chương và **luôn có ít nhất 1 câu điểm liệt**.
+  - Bấm giờ đếm ngược 10 phút (600 giây), điểm đạt chuẩn 18/20 và không sai câu điểm liệt.
 
 - ⚠️ **Luyện 60 Câu Điểm Liệt**:
   - Bộ 60 câu hỏi cốt lõi bắt buộc phải trả lời đúng trong kỳ thi sát hạch.

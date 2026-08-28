@@ -65,42 +65,78 @@ On_THI_B/
 │   ├── storage.js             # Quản lý lưu trữ localStorage
 │   └── styles/
 │       └── main.css           # Toàn bộ CSS hệ thống giao diện
+├── wrangler.jsonc             # Cấu hình deploy Cloudflare Workers
 └── README.md
 ```
 
 ---
 
-## 🚀 Hướng Dẫn Cài Đặt & Chạy Ứng Dụng
+## 💻 Danh Sách Lệnh & Hướng Dẫn Sử Dụng
 
-### 1. Yêu cầu môi trường
-- **Node.js**: Phiên bản 18 trở lên
-- **Python**: Phiên bản 3.8+ (chỉ cần khi muốn trích xuất lại dữ liệu từ PDF)
+### 1. Bảng tóm tắt các lệnh nhanh (Command Cheat Sheet)
 
-### 2. Khởi chạy ứng dụng Web
+| Lệnh | Mô tả tác vụ |
+| :--- | :--- |
+| `npm install` | Cài đặt các thư viện phụ thuộc của dự án |
+| `npm run dev` | Khởi chạy máy chủ phát triển (Dev server) tại `http://localhost:5173` |
+| `npm run build` | Đóng gói tối ưu ứng dụng cho Production ra thư mục `dist/` |
+| `npm run preview` | Xem thử kết quả bản đóng gói `dist/` trên máy local |
+| `npm run deploy` | Tự động **Build + Deploy** lên **Cloudflare Workers** |
+| `npm run deploy:pages` | Tự động **Build + Deploy** lên **Cloudflare Pages** |
+| `npx wrangler login` | Đăng nhập tài khoản Cloudflare trên Terminal qua trình duyệt |
+| `python3 extract_questions.py` | Trích xuất lại toàn bộ câu hỏi & cắt ảnh từ file PDF gốc |
+
+---
+
+### 2. Phát triển tại môi trường cục bộ (Local Development)
 
 ```bash
-# 1. Cài đặt các gói phụ thuộc
+# Cài đặt thư viện (chỉ cần chạy lần đầu hoặc khi đổi máy)
 npm install
 
-# 2. Khởi chạy máy chủ phát triển
+# Bật dev server có hỗ trợ Hot Module Replacement (HMR)
 npm run dev
+```
 
-# 3. Đóng gói cho môi trường Production
+---
+
+### 3. Đóng gói & Kiểm tra bản Production
+
+```bash
+# Build mã nguồn thành file tĩnh tối ưu trong thư mục dist/
 npm run build
 
-# 4. Xem thử bản build Production
+# Chạy server local để kiểm tra xem bản build dist/ hoạt động trơn tru không
 npm run preview
 ```
 
-### 3. Trích xuất lại dữ liệu từ PDF (Tùy chọn)
+---
 
-Nếu bạn cập nhật tài liệu PDF hoặc muốn tái tạo bộ dữ liệu JSON và hình ảnh:
+### 4. 🚀 Hướng Dẫn Deploy Lên Cloudflare
+
+Ứng dụng được thiết lập sẵn sàng để triển khai trực tiếp lên mạng lưới toàn cầu (Edge Network) của Cloudflare:
+
+#### Deploy lên Cloudflare Workers
+```bash
+# Bước 1: Đăng nhập tài khoản Cloudflare (chỉ cần làm 1 lần trên máy)
+npx wrangler login
+
+# Bước 2: Build và đẩy lên Cloudflare Workers
+npm run deploy
+```
+*Sau khi hoàn tất, bạn sẽ nhận được đường dẫn truy cập trực tiếp (VD: `https://on-thi-gplx-600.<subdomain>.workers.dev`).*
+
+---
+
+### 5. 🐍 Trích xuất & Làm mới Dữ liệu từ PDF (Tùy chọn)
+
+Nếu bạn có tài liệu PDF mới hoặc muốn tạo lại file câu hỏi và hình ảnh:
 
 ```bash
-# Cài đặt thư viện PyMuPDF
+# Cài đặt thư viện Python xử lý PDF
 pip install pymupdf
 
-# Chạy script trích xuất
+# Chạy script bóc tách câu hỏi, đáp án gạch chân và trích xuất hình ảnh minh họa
 python3 extract_questions.py
 ```
 
@@ -109,3 +145,4 @@ python3 extract_questions.py
 ## 📄 Bản Quyền & Giấy Phép
 
 Nội dung câu hỏi và hình ảnh sát hạch thuộc bản quyền tài liệu của Cục Cảnh sát giao thông & Bộ Giao thông vận tải. Ứng dụng được xây dựng phục vụ mục đích học tập và ôn thi sát hạch giấy phép lái xe.
+

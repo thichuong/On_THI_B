@@ -21,6 +21,10 @@ dist-ssr/
 .env
 .env.local
 .env.*.local
+.dev.vars
+
+# Cloudflare Wrangler
+.wrangler/
 
 # Python cache & virtual environments
 __pycache__/

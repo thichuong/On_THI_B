@@ -251,8 +251,36 @@ function submitExam() {
 // RENDERERS (EXAM, PRACTICE, CHAPTER, ALL 600)
 // ==========================================================================
 
+function preservePaletteScroll(paletteSelector = '.palette-grid') {
+  const existingPalette = document.querySelector(paletteSelector);
+  return existingPalette ? existingPalette.scrollTop : null;
+}
+
+function restorePaletteScroll(savedScrollTop, paletteSelector = '.palette-grid', currentBtnSelector = '.palette-btn.current') {
+  const newPalette = document.querySelector(paletteSelector);
+  if (!newPalette) return;
+
+  if (savedScrollTop !== null) {
+    newPalette.scrollTop = savedScrollTop;
+  }
+
+  const currentBtn = newPalette.querySelector(currentBtnSelector);
+  if (currentBtn) {
+    const btnRect = currentBtn.getBoundingClientRect();
+    const containerRect = newPalette.getBoundingClientRect();
+
+    if (btnRect.top < containerRect.top) {
+      newPalette.scrollTop -= (containerRect.top - btnRect.top + 8);
+    } else if (btnRect.bottom > containerRect.bottom) {
+      newPalette.scrollTop += (btnRect.bottom - containerRect.bottom + 8);
+    }
+  }
+}
+
 function renderExamView() {
   if (state.examQuestions.length === 0) return;
+
+  const savedScrollTop = preservePaletteScroll('.exam-sidebar .palette-grid');
 
   const q = state.examQuestions[state.currentExamIndex];
   const userAnswer = state.userAnswers[q.id];
@@ -435,6 +463,7 @@ function renderExamView() {
   `;
 
   attachExamEvents();
+  restorePaletteScroll(savedScrollTop, '.exam-sidebar .palette-grid');
 }
 
 function attachExamEvents() {
@@ -568,6 +597,8 @@ function renderPracticeView(title, customHeader = '') {
     attachChapterSelectEvent();
     return;
   }
+
+  const savedScrollTop = preservePaletteScroll('.exam-sidebar .palette-grid');
 
   const q = state.practiceQuestions[state.currentPracticeIndex];
   const isBookmarked = Storage.isBookmarked(q.id);
@@ -834,6 +865,7 @@ function renderPracticeView(title, customHeader = '') {
   }
 
   attachChapterSelectEvent();
+  restorePaletteScroll(savedScrollTop, '.exam-sidebar .palette-grid', '.palette-btn.current');
 }
 
 function attachChapterSelectEvent() {
@@ -987,8 +1019,9 @@ function renderAllQuestionsView() {
   document.querySelectorAll('[data-bmid]').forEach(btn => {
     btn.addEventListener('click', () => {
       const qid = Number(btn.dataset.bmid);
-      Storage.toggleBookmark(qid);
-      renderAllQuestionsView();
+      const isBm = Storage.toggleBookmark(qid);
+      btn.classList.toggle('active', isBm);
+      btn.innerHTML = `<span>${isBm ? '★ Đã lưu' : '☆ Lưu'}</span>`;
     });
   });
 

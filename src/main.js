@@ -23,7 +23,8 @@ const state = {
   selectedChapter: 1,
   searchQuery: '',
   filterType: 'all', // 'all', 'with_image', 'critical'
-  showInstantAnswer: true,
+  showInstantAnswer: false,
+  practiceAnswers: {}, // { [questionId]: optionNumber }
 
   // Lightbox State
   lightboxImage: null
@@ -486,6 +487,44 @@ function attachExamEvents() {
 // PRACTICE VIEW (CRITICAL 60, CHAPTER, MISTAKES, BOOKMARKS)
 // ==========================================================================
 
+function selectPracticeOption(optNum) {
+  if (state.practiceQuestions.length === 0) return;
+  const q = state.practiceQuestions[state.currentPracticeIndex];
+  if (!q) return;
+
+  state.practiceAnswers[q.id] = optNum;
+
+  // Record mistake or correct in Storage
+  if (optNum !== q.correct_option) {
+    Storage.recordWrongQuestion(q.id);
+  } else {
+    Storage.recordCorrectQuestion(q.id);
+  }
+
+  renderCurrentPracticeMode();
+}
+
+function resetPracticeCurrentQuestion() {
+  if (state.practiceQuestions.length === 0) return;
+  const q = state.practiceQuestions[state.currentPracticeIndex];
+  if (!q) return;
+
+  delete state.practiceAnswers[q.id];
+  renderCurrentPracticeMode();
+}
+
+function renderCurrentPracticeMode() {
+  if (state.currentMode === 'chapter') {
+    renderChapterView();
+  } else if (state.currentMode === 'critical') {
+    renderPracticeView('60 Câu Hỏi Điểm Liệt (Bắt Buộc Đúng)');
+  } else if (state.currentMode === 'mistakes') {
+    renderPracticeView('Danh Sách Câu Làm Sai Cần Ôn Lại');
+  } else if (state.currentMode === 'bookmarks') {
+    renderPracticeView('Câu Hỏi Đã Đánh Dấu Ghi Nhớ');
+  }
+}
+
 function renderPracticeView(title, customHeader = '') {
   if (state.practiceQuestions.length === 0) {
     elements.appMain.innerHTML = `
@@ -508,6 +547,46 @@ function renderPracticeView(title, customHeader = '') {
   const q = state.practiceQuestions[state.currentPracticeIndex];
   const isBookmarked = Storage.isBookmarked(q.id);
   const total = state.practiceQuestions.length;
+
+  const userAnswer = state.practiceAnswers[q.id];
+  const isAnswered = userAnswer !== undefined;
+  const isRevealed = state.showInstantAnswer || isAnswered;
+
+  // Compute stats in current practice list
+  let correctCount = 0;
+  let wrongCount = 0;
+  state.practiceQuestions.forEach(pq => {
+    const ans = state.practiceAnswers[pq.id];
+    if (ans !== undefined) {
+      if (ans === pq.correct_option) correctCount++;
+      else wrongCount++;
+    }
+  });
+  const answeredCount = correctCount + wrongCount;
+
+  // Feedback banner
+  let feedbackHtml = '';
+  if (isAnswered) {
+    if (userAnswer === q.correct_option) {
+      feedbackHtml = `
+        <div class="practice-feedback correct">
+          <span class="feedback-icon">🎉</span>
+          <div class="feedback-text">
+            <strong>Chính xác!</strong> Bạn đã chọn đúng đáp án <strong>#${q.correct_option}</strong>.
+          </div>
+        </div>
+      `;
+    } else {
+      feedbackHtml = `
+        <div class="practice-feedback incorrect">
+          <span class="feedback-icon">❌</span>
+          <div class="feedback-text">
+            <strong>Chưa chính xác!</strong> Bạn đã chọn ý <strong>#${userAnswer}</strong>, đáp án đúng là ý <strong>#${q.correct_option}</strong>.
+          </div>
+        </div>
+      `;
+    }
+  }
 
   elements.appMain.innerHTML = `
     ${customHeader}
@@ -537,42 +616,70 @@ function renderPracticeView(title, customHeader = '') {
         <div class="options-list">
           ${q.options.map((optText, idx) => {
             const optNum = idx + 1;
-            const isCorrect = optNum === q.correct_option;
+            const isCorrectOption = optNum === q.correct_option;
+            const isUserSelected = userAnswer === optNum;
+
             let optClass = 'option-item';
-            if (state.showInstantAnswer && isCorrect) {
-              optClass += ' correct';
+            let statusIconHtml = '';
+
+            if (isRevealed) {
+              if (isCorrectOption) {
+                optClass += ' correct';
+                statusIconHtml = `<span class="option-status-icon correct">✔️</span>`;
+              } else if (isUserSelected && !isCorrectOption) {
+                optClass += ' incorrect';
+                statusIconHtml = `<span class="option-status-icon incorrect">❌</span>`;
+              }
+            } else if (isUserSelected) {
+              optClass += ' selected';
             }
 
             return `
-              <div class="${optClass}">
+              <button class="${optClass}" data-pracopt="${optNum}">
                 <span class="option-key">${optNum}</span>
                 <span class="option-text">${escapeHtml(optText)}</span>
-              </div>
+                ${statusIconHtml}
+              </button>
             `;
           }).join('')}
         </div>
 
-        <div class="explanation-box">
-          <div class="explanation-title">
-            <span>💡 Đáp án đúng & Lời khuyên</span>
+        ${isRevealed ? `
+          <div class="explanation-box">
+            ${feedbackHtml}
+            <div class="explanation-title">
+              <span>💡 Đáp án chuẩn & Lời khuyên chi tiết</span>
+            </div>
+            <div class="explanation-content">
+              <strong>Đáp án đúng: Ý số ${q.correct_option}.</strong> ${q.explanation || (q.is_critical ? 'Lưu ý: Đây là câu hỏi điểm liệt (mất an toàn giao thông nghiêm trọng). Sai câu này trong kỳ thi sát hạch sẽ bị đánh giá TRƯỢT trực tiếp.' : 'Quy tắc chuẩn theo Bộ 600 câu hỏi sát hạch năm 2025.')}
+            </div>
           </div>
-          <div class="explanation-content">
-            <strong>Đáp án đúng là ý số ${q.correct_option}.</strong> ${q.explanation || (q.is_critical ? 'Lưu ý: Đây là câu hỏi điểm liệt. Sai câu này trong kỳ thi sát hạch sẽ bị đánh giá TRƯỢT trực tiếp.' : 'Quy tắc chuẩn theo Bộ 600 câu hỏi sát hạch năm 2025.')}
+        ` : `
+          <div class="practice-hint-placeholder">
+            <span>👉 Bấm chọn một đáp án ở trên để kiểm tra kết quả ngay lập tức</span>
           </div>
-        </div>
+        `}
 
         <div class="question-controls">
           <button class="btn-nav" id="btn-prev-prac" ${state.currentPracticeIndex === 0 ? 'disabled' : ''}>
-            ⬅️ Câu trước
+            ⬅️ Câu trước <span class="kbd">←</span>
           </button>
 
-          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer;">
-            <input type="checkbox" id="chk-instant-ans" ${state.showInstantAnswer ? 'checked' : ''} />
-            <span>Luôn hiện đáp án đúng</span>
-          </label>
+          <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            ${isAnswered ? `
+              <button class="btn-nav btn-sm" id="btn-reset-prac" title="Chọn lại đáp án cho câu này">
+                🔄 Chọn lại <span class="kbd">R</span>
+              </button>
+            ` : ''}
+
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer; user-select: none;">
+              <input type="checkbox" id="chk-instant-ans" ${state.showInstantAnswer ? 'checked' : ''} />
+              <span>👁️ Luôn hiện đáp án & giải thích</span>
+            </label>
+          </div>
 
           <button class="btn-nav btn-primary" id="btn-next-prac" ${state.currentPracticeIndex === total - 1 ? 'disabled' : ''}>
-            Câu tiếp ➡️
+            Câu tiếp ➡️ <span class="kbd">→</span>
           </button>
         </div>
       </div>
@@ -582,14 +689,29 @@ function renderPracticeView(title, customHeader = '') {
         <div class="sidebar-card">
           <div class="palette-header">
             <span class="palette-title">Danh sách câu (${total})</span>
+            <span class="palette-stats" style="font-size: 0.8125rem;">
+              Đã làm: ${answeredCount}/${total}
+              ${answeredCount > 0 ? `<br><span style="color: var(--success); font-weight: 700;">${correctCount} Đúng</span> • <span style="color: var(--danger); font-weight: 700;">${wrongCount} Sai</span>` : ''}
+            </span>
           </div>
           <div class="palette-grid" style="max-height: 480px; overflow-y: auto; padding-right: 4px;">
             ${state.practiceQuestions.map((pq, idx) => {
               const isCurrent = idx === state.currentPracticeIndex;
+              const ans = state.practiceAnswers[pq.id];
+              const isAnsweredItem = ans !== undefined;
+
               let cls = 'palette-btn';
               if (isCurrent) cls += ' current';
               if (pq.is_critical) cls += ' critical-indicator';
               if (Storage.isBookmarked(pq.id)) cls += ' bookmarked';
+
+              if (isAnsweredItem) {
+                if (ans === pq.correct_option) {
+                  cls += ' correct-mark';
+                } else {
+                  cls += ' incorrect-mark';
+                }
+              }
 
               return `
                 <button class="${cls}" data-pracidx="${idx}">
@@ -598,23 +720,51 @@ function renderPracticeView(title, customHeader = '') {
               `;
             }).join('')}
           </div>
+
+          <div class="palette-legend" style="margin-top: 0.75rem;">
+            <div class="legend-item">
+              <span class="legend-dot" style="background: var(--success); border-color: var(--success);"></span>
+              <span>Làm đúng (${correctCount})</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: var(--danger); border-color: var(--danger);"></span>
+              <span>Làm sai (${wrongCount})</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot critical"></span>
+              <span>Câu điểm liệt</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot bookmarked"></span>
+              <span>Đã lưu ★</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   `;
 
   // Attach Practice Events
+  // Option clicks
+  document.querySelectorAll('.option-item[data-pracopt]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const optNum = Number(btn.dataset.pracopt);
+      selectPracticeOption(optNum);
+    });
+  });
+
+  const resetBtn = document.getElementById('btn-reset-prac');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', resetPracticeCurrentQuestion);
+  }
+
   const prevBtn = document.getElementById('btn-prev-prac');
   const nextBtn = document.getElementById('btn-next-prac');
   if (prevBtn) {
     prevBtn.addEventListener('click', () => {
       if (state.currentPracticeIndex > 0) {
         state.currentPracticeIndex--;
-        if (state.currentMode === 'chapter') {
-          renderChapterView();
-        } else {
-          renderPracticeView(title, customHeader);
-        }
+        renderCurrentPracticeMode();
       }
     });
   }
@@ -622,11 +772,7 @@ function renderPracticeView(title, customHeader = '') {
     nextBtn.addEventListener('click', () => {
       if (state.currentPracticeIndex < state.practiceQuestions.length - 1) {
         state.currentPracticeIndex++;
-        if (state.currentMode === 'chapter') {
-          renderChapterView();
-        } else {
-          renderPracticeView(title, customHeader);
-        }
+        renderCurrentPracticeMode();
       }
     });
   }
@@ -634,11 +780,7 @@ function renderPracticeView(title, customHeader = '') {
   document.querySelectorAll('.palette-btn[data-pracidx]').forEach(btn => {
     btn.addEventListener('click', () => {
       state.currentPracticeIndex = Number(btn.dataset.pracidx);
-      if (state.currentMode === 'chapter') {
-        renderChapterView();
-      } else {
-        renderPracticeView(title, customHeader);
-      }
+      renderCurrentPracticeMode();
     });
   });
 
@@ -647,11 +789,7 @@ function renderPracticeView(title, customHeader = '') {
     bmBtn.addEventListener('click', () => {
       const curQ = state.practiceQuestions[state.currentPracticeIndex];
       Storage.toggleBookmark(curQ.id);
-      if (state.currentMode === 'chapter') {
-        renderChapterView();
-      } else {
-        renderPracticeView(title, customHeader);
-      }
+      renderCurrentPracticeMode();
     });
   }
 
@@ -659,11 +797,7 @@ function renderPracticeView(title, customHeader = '') {
   if (chk) {
     chk.addEventListener('change', (e) => {
       state.showInstantAnswer = e.target.checked;
-      if (state.currentMode === 'chapter') {
-        renderChapterView();
-      } else {
-        renderPracticeView(title, customHeader);
-      }
+      renderCurrentPracticeMode();
     });
   }
 
@@ -1001,6 +1135,43 @@ function setupKeyboardShortcuts() {
           Storage.toggleBookmark(currentQ.id);
           renderExamView();
         }
+      }
+    } else if (['chapter', 'critical', 'mistakes', 'bookmarks'].includes(state.currentMode)) {
+      // Practice Modes shortcuts
+      // 1, 2, 3, 4 to select options
+      if (['1', '2', '3', '4'].includes(e.key)) {
+        const optNum = Number(e.key);
+        const currentQ = state.practiceQuestions[state.currentPracticeIndex];
+        if (currentQ && optNum <= currentQ.options.length) {
+          selectPracticeOption(optNum);
+        }
+      }
+
+      // Left / Right arrows or A / D
+      if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') {
+        if (state.currentPracticeIndex > 0) {
+          state.currentPracticeIndex--;
+          renderCurrentPracticeMode();
+        }
+      } else if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') {
+        if (state.currentPracticeIndex < state.practiceQuestions.length - 1) {
+          state.currentPracticeIndex++;
+          renderCurrentPracticeMode();
+        }
+      }
+
+      // Bookmark with B
+      if (e.key.toLowerCase() === 'b') {
+        const currentQ = state.practiceQuestions[state.currentPracticeIndex];
+        if (currentQ) {
+          Storage.toggleBookmark(currentQ.id);
+          renderCurrentPracticeMode();
+        }
+      }
+
+      // Reset with R
+      if (e.key.toLowerCase() === 'r') {
+        resetPracticeCurrentQuestion();
       }
     }
   });

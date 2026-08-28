@@ -84,7 +84,11 @@ function updateThemeIcon(theme) {
 function switchMode(newMode) {
   state.currentMode = newMode;
   elements.navTabs.forEach(tab => {
-    tab.classList.toggle('active', tab.dataset.mode === newMode);
+    const isActive = tab.dataset.mode === newMode;
+    tab.classList.toggle('active', isActive);
+    if (isActive) {
+      tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    }
   });
 
   if (newMode === 'exam') {
@@ -320,7 +324,7 @@ function renderExamView() {
         ${q.image ? `
           <div class="question-image-container" id="question-img-wrap">
             <img src="${q.image}" alt="Hình minh họa câu ${q.id}" class="question-image" />
-            <div class="zoom-hint">🔍 Nhấn để phóng to</div>
+            <div class="zoom-hint" title="Phóng to hình ảnh">🔍</div>
           </div>
         ` : ''}
 
@@ -665,7 +669,7 @@ function renderPracticeView(title, customHeader = '') {
         ${q.image ? `
           <div class="question-image-container" id="prac-img-wrap">
             <img src="${q.image}" alt="Hình câu ${q.id}" class="question-image" />
-            <div class="zoom-hint">🔍 Phóng to</div>
+            <div class="zoom-hint" title="Phóng to hình ảnh">🔍</div>
           </div>
         ` : ''}
 
@@ -975,7 +979,7 @@ function renderAllQuestionsView() {
           ${q.image ? `
             <div class="question-image-container" style="max-height: 260px;" data-zoomimg="${q.image}">
               <img src="${q.image}" alt="Câu ${q.id}" class="question-image" style="max-height: 240px;" />
-              <div class="zoom-hint">🔍 Phóng to</div>
+              <div class="zoom-hint" title="Phóng to hình ảnh">🔍</div>
             </div>
           ` : ''}
 

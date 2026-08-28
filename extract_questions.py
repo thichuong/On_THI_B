@@ -214,17 +214,15 @@ def main():
             "explanation": "Câu hỏi điểm liệt bắt buộc phải trả lời đúng." if is_crit else ""
         })
 
-    # Save to src/data/questions.json and public/data/questions.json
-    os.makedirs("public/data", exist_ok=True)
+    # Save to src/data/questions.json
+    os.makedirs("src/data", exist_ok=True)
     with open("src/data/questions.json", "w", encoding="utf-8") as f:
-        json.dump(final_questions, f, ensure_ascii=False, indent=2)
-    with open("public/data/questions.json", "w", encoding="utf-8") as f:
         json.dump(final_questions, f, ensure_ascii=False, indent=2)
 
     print(f"Successfully processed {len(final_questions)} questions!")
     print(f"Questions with images: {sum(1 for q in final_questions if q['image'])}")
     print(f"Critical questions: {sum(1 for q in final_questions if q['is_critical'])}")
-    print("Files saved to src/data/questions.json and public/data/questions.json")
+    print("File saved to src/data/questions.json")
 
 if __name__ == "__main__":
     main()

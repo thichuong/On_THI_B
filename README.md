@@ -60,11 +60,10 @@ On_THI_B/
 ├── extract_questions.py       # Script Python trích xuất câu hỏi và cắt ảnh
 ├── index.html                 # Giao diện chính của ứng dụng
 ├── package.json               # Cấu hình project & dependencies
-├── public/                    # Tài nguyên tĩnh
-│   ├── data/questions.json    # Dữ liệu 600 câu hỏi dạng JSON
-│   └── images/                # 318 hình ảnh minh họa (sa hình, biển báo)
+├── public/                    # Tài nguyên tĩnh (ảnh minh họa sa hình, biển báo)
+│   └── images/                # 318 hình ảnh minh họa
 ├── src/                       # Mã nguồn ứng dụng
-│   ├── data/questions.json    # JSON câu hỏi nạp vào app
+│   ├── data/questions.json    # Dữ liệu 600 câu hỏi nạp vào app (được bundle trực tiếp)
 │   ├── exam_engine.js         # Logic tạo đề thi, tính điểm, cấu trúc chương
 │   ├── main.js                # Logic điều khiển giao diện & các chế độ thi
 │   ├── storage.js             # Quản lý lưu trữ localStorage

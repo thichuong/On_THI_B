@@ -62,13 +62,15 @@ On_THI_B/
 ├── package.json               # Cấu hình project & dependencies
 ├── public/                    # Tài nguyên tĩnh (ảnh minh họa sa hình, biển báo)
 │   └── images/                # 318 hình ảnh minh họa
-├── src/                       # Mã nguồn ứng dụng
+├── src/                       # Mã nguồn ứng dụng (Kiến trúc Modular Component & SoA)
+│   ├── core/                  # Nhân ứng dụng (store, router, eventBus)
+│   ├── services/              # Tầng nghiệp vụ (questionService, examEngine, storageService, timerService)
+│   ├── components/            # UI components tái sử dụng (Header, QuestionCard, Palette, Modals)
+│   ├── views/                 # Màn hình chế độ học (ExamView, PracticeView, ChapterView, SearchExplorerView)
+│   ├── utils/                 # Tiện ích bổ trợ (dom, keyboard)
 │   ├── data/questions.json    # Dữ liệu 600 câu hỏi nạp vào app (được bundle trực tiếp)
-│   ├── exam_engine.js         # Logic tạo đề thi, tính điểm, cấu trúc chương
-│   ├── main.js                # Logic điều khiển giao diện & các chế độ thi
-│   ├── storage.js             # Quản lý lưu trữ localStorage
-│   └── styles/
-│       └── main.css           # Toàn bộ CSS hệ thống giao diện
+│   ├── styles/                # CSS module hóa (tokens, layout, base, components/, views/)
+│   └── main.js                # Entry point tinh gọn khởi tạo app
 ├── wrangler.jsonc             # Cấu hình deploy Cloudflare Workers
 └── README.md
 ```

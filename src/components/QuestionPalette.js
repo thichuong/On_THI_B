@@ -1,0 +1,179 @@
+/**
+ * Question Palette Component: Renders question number grid for navigation and status overview.
+ */
+import { StorageService } from '../services/storageService.js';
+import { $ } from '../utils/dom.js';
+
+export class QuestionPalette {
+  /**
+   * Render question palette HTML
+   * @param {Object} options
+   * @param {Array} options.questions
+   * @param {number} options.currentIndex
+   * @param {Object} options.answers Map of { [questionId]: selectedOption }
+   * @param {boolean} [options.isSubmitted=false]
+   * @param {boolean} [options.isPractice=false]
+   * @param {string} [options.title='Danh sách câu']
+   * @returns {string} HTML string
+   */
+  static render({
+    questions = [],
+    currentIndex = 0,
+    answers = {},
+    isSubmitted = false,
+    isPractice = false,
+    title = 'Danh sách câu'
+  }) {
+    const total = questions.length;
+    let answeredCount = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+
+    questions.forEach(q => {
+      const ans = answers[q.id];
+      if (ans !== undefined && ans !== null) {
+        answeredCount++;
+        if (Number(ans) === Number(q.correct_option)) {
+          correctCount++;
+        } else {
+          wrongCount++;
+        }
+      }
+    });
+
+    const isLargeGrid = total > 30;
+
+    return `
+      <div class="sidebar-card">
+        <div class="palette-header">
+          <span class="palette-title">${title} (${total})</span>
+          <span class="palette-stats">
+            Đã làm: ${answeredCount}/${total}
+            ${isPractice && answeredCount > 0 ? `<br><span style="color: var(--success); font-weight: 700;">${correctCount} Đúng</span> • <span style="color: var(--danger); font-weight: 700;">${wrongCount} Sai</span>` : ''}
+          </span>
+        </div>
+
+        <div class="palette-grid ${isLargeGrid ? 'palette-grid-50' : ''}">
+          ${questions.map((q, idx) => {
+            const ans = answers[q.id];
+            const isCurrent = idx === currentIndex;
+            const isAnswered = ans !== undefined && ans !== null;
+            const isBm = StorageService.isBookmarked(q.id);
+
+            let cls = 'palette-btn';
+            if (isCurrent) cls += ' current';
+            if (isAnswered) cls += ' answered';
+            if (isBm) cls += ' bookmarked';
+            if (q.is_critical) cls += ' critical-indicator';
+
+            if (isSubmitted) {
+              const isCorrect = Number(ans) === Number(q.correct_option);
+              if (isCorrect) {
+                cls += ' correct-mark';
+              } else if (q.is_critical) {
+                cls += ' critical-failed-mark';
+              } else {
+                cls += ' incorrect-mark';
+              }
+            } else if (isPractice && isAnswered) {
+              const isCorrect = Number(ans) === Number(q.correct_option);
+              cls += isCorrect ? ' correct-mark' : ' incorrect-mark';
+            }
+
+            return `
+              <button class="${cls}" data-palette-index="${idx}" aria-label="Câu ${idx + 1}">
+                ${idx + 1}
+              </button>
+            `;
+          }).join('')}
+        </div>
+
+        <div class="palette-legend">
+          ${isPractice ? `
+            <div class="legend-item">
+              <span class="legend-dot" style="background: var(--success); border-color: var(--success);"></span>
+              <span>Đúng (${correctCount})</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: var(--danger); border-color: var(--danger);"></span>
+              <span>Sai (${wrongCount})</span>
+            </div>
+          ` : `
+            <div class="legend-item">
+              <span class="legend-dot unanswered"></span>
+              <span>Chưa làm</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot answered"></span>
+              <span>Đã chọn</span>
+            </div>
+          `}
+          <div class="legend-item">
+            <span class="legend-dot critical"></span>
+            <span>Câu liệt</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot bookmarked"></span>
+            <span>Đã lưu ★</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Bind click event on palette buttons
+   * @param {HTMLElement} container
+   * @param {Function} onSelect Callback with question index
+   */
+  static bindEvents(container, onSelect) {
+    if (!container) return;
+    const buttons = container.querySelectorAll('.palette-btn[data-palette-index]');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.dataset.paletteIndex);
+        if (typeof onSelect === 'function') {
+          onSelect(index);
+        }
+      });
+    });
+  }
+
+  /**
+   * Helper to preserve scroll position across re-renders
+   * @param {string} [selector='.palette-grid']
+   * @returns {number|null}
+   */
+  static preserveScroll(selector = '.palette-grid') {
+    const el = $(selector);
+    return el ? el.scrollTop : null;
+  }
+
+  /**
+   * Helper to restore scroll position and keep current button in view
+   * @param {number|null} savedScrollTop
+   * @param {string} [gridSelector='.palette-grid']
+   * @param {string} [currentBtnSelector='.palette-btn.current']
+   */
+  static restoreScroll(savedScrollTop, gridSelector = '.palette-grid', currentBtnSelector = '.palette-btn.current') {
+    const grid = $(gridSelector);
+    if (!grid) return;
+
+    if (savedScrollTop !== null) {
+      grid.scrollTop = savedScrollTop;
+    }
+
+    const currentBtn = $(currentBtnSelector, grid);
+    if (currentBtn) {
+      const btnRect = currentBtn.getBoundingClientRect();
+      const containerRect = grid.getBoundingClientRect();
+
+      if (btnRect.top < containerRect.top) {
+        grid.scrollTop -= (containerRect.top - btnRect.top + 8);
+      } else if (btnRect.bottom > containerRect.bottom) {
+        grid.scrollTop += (btnRect.bottom - containerRect.bottom + 8);
+      }
+    }
+  }
+}
+

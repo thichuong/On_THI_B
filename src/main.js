@@ -12,6 +12,7 @@ const state = {
   examQuestions: [],
   currentExamIndex: 0,
   userAnswers: {}, // { [questionId]: optionIndex }
+  isExamStarted: false,
   isExamSubmitted: false,
   isReviewMode: false,
   examResult: null,
@@ -55,8 +56,8 @@ function initApp() {
   setupEventListeners();
   setupKeyboardShortcuts();
   
-  // Start with a fresh 50-question Standard Mock Exam (33 mins)
-  startNewExam('standard');
+  // Prepare standard mock exam start screen (questions and timer deferred until user clicks Start)
+  prepareExam('standard');
 }
 
 // Theme handling
@@ -92,14 +93,14 @@ function switchMode(newMode) {
   });
 
   if (newMode === 'exam') {
-    if (state.examQuestions.length === 0 || state.examType !== 'standard') {
-      startNewExam('standard');
+    if (!state.isExamStarted || state.examType !== 'standard') {
+      prepareExam('standard');
     } else {
       renderExamView();
     }
   } else if (newMode === 'quick-exam') {
-    if (state.examQuestions.length === 0 || state.examType !== 'quick') {
-      startNewExam('quick');
+    if (!state.isExamStarted || state.examType !== 'quick') {
+      prepareExam('quick');
     } else {
       renderExamView();
     }
@@ -131,7 +132,7 @@ function switchMode(newMode) {
 // EXAM ENGINE LOGIC & TIMERS
 // ==========================================================================
 
-function startNewExam(examType = 'standard') {
+function prepareExam(examType = 'standard') {
   // Clear any active timer
   if (state.timerInterval) {
     clearInterval(state.timerInterval);
@@ -141,13 +142,36 @@ function startNewExam(examType = 'standard') {
   state.examType = examType;
   const preset = EXAM_PRESETS[examType] || EXAM_PRESETS.standard;
 
-  state.examQuestions = ExamEngine.generateExam(state.allQuestions, examType, {
+  state.isExamStarted = false;
+  state.isExamSubmitted = false;
+  state.isReviewMode = false;
+  state.examResult = null;
+  state.examQuestions = [];
+  state.currentExamIndex = 0;
+  state.userAnswers = {};
+  state.timerSeconds = preset.durationSeconds;
+  state.examTotalSeconds = preset.durationSeconds;
+
+  renderExamView();
+}
+
+function beginExam() {
+  // Clear any active timer
+  if (state.timerInterval) {
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+  }
+
+  const preset = EXAM_PRESETS[state.examType] || EXAM_PRESETS.standard;
+
+  state.examQuestions = ExamEngine.generateExam(state.allQuestions, state.examType, {
     minCritical: preset.minCritical,
     maxCritical: preset.maxCritical,
     shuffleQuestions: true
   });
   state.currentExamIndex = 0;
   state.userAnswers = {};
+  state.isExamStarted = true;
   state.isExamSubmitted = false;
   state.isReviewMode = false;
   state.examResult = null;
@@ -156,6 +180,94 @@ function startNewExam(examType = 'standard') {
 
   startTimer();
   renderExamView();
+}
+
+function startNewExam(examType = 'standard') {
+  prepareExam(examType);
+}
+
+function renderExamStartScreen() {
+  const isQuick = state.examType === 'quick';
+  const preset = EXAM_PRESETS[state.examType] || EXAM_PRESETS.standard;
+
+  elements.appMain.innerHTML = `
+    <div class="exam-start-container">
+      <div class="exam-start-card">
+        <div class="exam-start-header">
+          <div class="exam-start-icon">
+            ${isQuick ? '⚡' : '📝'}
+          </div>
+          <div class="badge badge-index" style="${isQuick ? 'background: rgba(245, 158, 11, 0.2); color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);' : ''}">
+            ${isQuick ? 'CHẾ ĐỘ THI NHANH (20 CÂU)' : 'CHẾ ĐỘ THI THỬ CHUẨN (50 CÂU)'}
+          </div>
+          <h2 class="exam-start-title">${isQuick ? 'Sẵn Sàng Thi Nhanh (20 Câu)' : 'Sẵn Sàng Làm Bài Thi Sát Hạch'}</h2>
+          <p class="exam-start-desc">
+            ${isQuick
+              ? 'Bài thi nhanh 20 câu trong 10 phút giúp bạn kiểm tra kiến thức chớp nhoáng, đảm bảo có câu hỏi điểm liệt và chấm điểm tự động.'
+              : 'Đề thi 50 câu (33 phút) được tạo ngẫu nhiên theo đúng cấu trúc chuẩn của Cục CSGT 2025. Đồng hồ chỉ đếm ngược sau khi bạn bấm Bắt đầu.'}
+          </p>
+        </div>
+
+        <!-- Thông tin cấu trúc bài thi -->
+        <div class="exam-info-grid">
+          <div class="exam-info-item">
+            <div class="exam-info-item-icon timer">⏱️</div>
+            <div class="exam-info-item-text">
+              <span class="exam-info-item-label">Thời gian làm bài</span>
+              <span class="exam-info-item-val">${preset.durationMinutes} Phút (${preset.durationMinutes * 60}s)</span>
+            </div>
+          </div>
+
+          <div class="exam-info-item">
+            <div class="exam-info-item-icon questions">📋</div>
+            <div class="exam-info-item-text">
+              <span class="exam-info-item-label">Tổng số câu hỏi</span>
+              <span class="exam-info-item-val">${preset.totalQuestions} Câu trắc nghiệm</span>
+            </div>
+          </div>
+
+          <div class="exam-info-item">
+            <div class="exam-info-item-icon pass">🎯</div>
+            <div class="exam-info-item-text">
+              <span class="exam-info-item-label">Điểm đạt yêu cầu</span>
+              <span class="exam-info-item-val">Từ ${preset.passThreshold}/${preset.totalQuestions} câu trở lên</span>
+            </div>
+          </div>
+
+          <div class="exam-info-item">
+            <div class="exam-info-item-icon critical">⚠️</div>
+            <div class="exam-info-item-text">
+              <span class="exam-info-item-label">Câu hỏi điểm liệt</span>
+              <span class="exam-info-item-val">Không được làm sai</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lưu ý quy chế thi -->
+        <div class="exam-rules-card">
+          <h4>📌 Quy định & Hướng dẫn làm bài:</h4>
+          <ul class="exam-rules-list">
+            <li>Mỗi câu hỏi chỉ có <strong>duy nhất 1 đáp án đúng</strong>.</li>
+            <li>Đồng hồ đếm ngược sẽ <strong>bắt đầu tính thời gian</strong> ngay khi bạn bấm nút "Bắt Đầu Làm Bài".</li>
+            <li>Làm sai bất kỳ <strong>câu hỏi điểm liệt</strong> nào, bài thi sẽ bị tính là <strong>Không Đạt</strong> ngay lập tức.</li>
+            <li>Phím <kbd class="kbd">1</kbd> - <kbd class="kbd">4</kbd> để chọn đáp án, phím mũi tên <kbd class="kbd">←</kbd> <kbd class="kbd">→</kbd> để chuyển câu hỏi.</li>
+          </ul>
+        </div>
+
+        <!-- Nút Bắt đầu hành động chính -->
+        <button id="btn-start-exam" class="btn-start-exam-main" aria-label="Bắt đầu làm bài thi">
+          <span>🚀 Bắt Đầu Làm Bài</span>
+        </button>
+        <div class="exam-start-keyboard-hint">
+          <span>(Hoặc nhấn phím <kbd class="kbd">Enter ↵</kbd> để bắt đầu ngay)</span>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('btn-start-exam')?.addEventListener('click', () => {
+    beginExam();
+  });
 }
 
 function startTimer() {
@@ -320,6 +432,11 @@ function restorePaletteScroll(savedScrollTop, paletteSelector = '.palette-grid',
 }
 
 function renderExamView() {
+  if (!state.isExamStarted) {
+    renderExamStartScreen();
+    return;
+  }
+
   if (state.examQuestions.length === 0) return;
 
   const savedScrollTop = preservePaletteScroll('.exam-sidebar .palette-grid');
@@ -1207,6 +1324,14 @@ function setupKeyboardShortcuts() {
     }
 
     if (['exam', 'quick-exam'].includes(state.currentMode)) {
+      if (!state.isExamStarted) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          beginExam();
+        }
+        return;
+      }
+
       // 1, 2, 3, 4 to select options
       if (['1', '2', '3', '4'].includes(e.key)) {
         const optNum = Number(e.key);

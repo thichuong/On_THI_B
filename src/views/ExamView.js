@@ -18,6 +18,7 @@ export class ExamView extends BaseView {
     super(`ExamView-${examType}`);
     this.examType = examType; // 'standard' | 'quick'
     this.timer = new TimerService();
+    this.recordedWrongIds = new Set();
   }
 
   mount(container) {
@@ -34,6 +35,7 @@ export class ExamView extends BaseView {
 
   prepareExam() {
     this.timer.stop();
+    this.recordedWrongIds.clear();
     const preset = EXAM_PRESETS[this.examType] || EXAM_PRESETS.standard;
 
     store.setState({
@@ -108,7 +110,8 @@ export class ExamView extends BaseView {
     const preset = EXAM_PRESETS[this.examType] || EXAM_PRESETS.standard;
 
     const isQuick = this.examType === 'quick';
-    const examBadgeText = isQuick ? '⚡ THI NHANH (20 CÂU / 10 PHÚT)' : '📝 THI THỬ CHUẨN (50 CÂU / 33 PHÚT)';
+    const isInstantFeedback = isQuick;
+    const examBadgeText = isQuick ? '⚡ THI NHANH - KẾT QUẢ TRỰC TIẾP (20 CÂU)' : '📝 THI THỬ CHUẨN (50 CÂU / 33 PHÚT)';
     const examBadgeStyle = isQuick
       ? 'background: rgba(245, 158, 11, 0.2); color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);'
       : 'background: rgba(99, 102, 241, 0.2); color: #818cf8; border-color: rgba(99, 102, 241, 0.4);';
@@ -121,6 +124,7 @@ export class ExamView extends BaseView {
       isSubmitted: state.isExamSubmitted,
       isReviewMode: state.isReviewMode,
       isPractice: false,
+      isInstantFeedback,
       badgePrefix: examBadgeText,
       badgeStyle: examBadgeStyle
     });
@@ -131,10 +135,13 @@ export class ExamView extends BaseView {
       answers: state.userAnswers,
       isSubmitted: state.isExamSubmitted,
       isPractice: false,
-      title: `Danh sách ${totalQuestions} câu`
+      isInstantFeedback,
+      title: isQuick ? `Thi Nhanh (${totalQuestions} câu)` : `Danh sách ${totalQuestions} câu`
     });
 
     const timeStr = TimerService.formatTime(this.timer.getRemaining());
+    const answeredCount = Object.keys(state.userAnswers).length;
+    const isAllAnswered = answeredCount === totalQuestions;
 
     this.container.innerHTML = `
       <div class="exam-layout">
@@ -161,7 +168,7 @@ export class ExamView extends BaseView {
               </button>
             ` : `
               <button class="btn-submit-exam" id="btn-submit-test">
-                📤 Nộp Bài Thi ${isQuick ? 'Nhanh' : 'Sát Hạch'}
+                ${isQuick ? (isAllAnswered ? '🏁 Hoàn Thành & Xem Điểm' : '🏁 Xem Tổng Kết Bài Thi') : '📤 Nộp Bài Thi Sát Hạch'}
               </button>
             `}
           </div>
@@ -188,12 +195,12 @@ export class ExamView extends BaseView {
               ${isQuick ? '⚡' : '📝'}
             </div>
             <div class="badge badge-index" style="${isQuick ? 'background: rgba(245, 158, 11, 0.2); color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);' : ''}">
-              ${isQuick ? 'CHẾ ĐỘ THI NHANH (20 CÂU)' : 'CHẾ ĐỘ THI THỬ CHUẨN (50 CÂU)'}
+              ${isQuick ? 'CHẾ ĐỘ THI NHANH (20 CÂU) - PHẢN HỒI TỨC THÌ' : 'CHẾ ĐỘ THI THỬ CHUẨN (50 CÂU)'}
             </div>
             <h2 class="exam-start-title">${isQuick ? 'Sẵn Sàng Thi Nhanh (20 Câu)' : 'Sẵn Sàng Làm Bài Thi Sát Hạch'}</h2>
             <p class="exam-start-desc">
               ${isQuick
-                ? 'Bài thi nhanh 20 câu trong 10 phút giúp bạn kiểm tra kiến thức chớp nhoáng, đảm bảo có câu hỏi điểm liệt và chấm điểm tự động.'
+                ? 'Bài thi nhanh 20 câu trong 10 phút: <strong>Kết quả đúng/sai và giải thích chi tiết sẽ hiển thị trực tiếp ngay khi bạn chọn đáp án</strong> giúp bạn học và nhớ ngay!'
                 : 'Đề thi 50 câu (33 phút) được tạo ngẫu nhiên theo đúng cấu trúc chuẩn của Cục CSGT 2025. Đồng hồ chỉ đếm ngược sau khi bạn bấm Bắt đầu.'}
             </p>
           </div>
@@ -236,9 +243,15 @@ export class ExamView extends BaseView {
             <h4>📌 Quy định & Hướng dẫn làm bài:</h4>
             <ul class="exam-rules-list">
               <li>Mỗi câu hỏi chỉ có <strong>duy nhất 1 đáp án đúng</strong>.</li>
-              <li>Đồng hồ đếm ngược sẽ <strong>bắt đầu tính thời gian</strong> ngay khi bạn bấm nút "Bắt Đầu Làm Bài".</li>
-              <li>Làm sai bất kỳ <strong>câu hỏi điểm liệt</strong> nào, bài thi sẽ bị tính là <strong>Không Đạt</strong> ngay lập tức.</li>
-              <li>Phím <kbd class="kbd">1</kbd> - <kbd class="kbd">4</kbd> để chọn đáp án, phím mũi tên <kbd class="kbd">←</kbd> <kbd class="kbd">→</kbd> để chuyển câu hỏi.</li>
+              ${isQuick ? `
+                <li><strong>Phản hồi trực tiếp:</strong> Hệ thống chấm điểm và hiển thị đáp án đúng cùng giải thích ngay khi bạn chọn.</li>
+                <li><strong>Chốt đáp án:</strong> Mỗi câu đã chọn sẽ được khóa lại để đảm bảo tính khách quan của bài thi.</li>
+                <li><strong>Cảnh báo điểm liệt:</strong> Nếu làm sai câu điểm liệt, hệ thống sẽ cảnh báo đỏ trực tiếp ngay lập tức.</li>
+              ` : `
+                <li>Đồng hồ đếm ngược sẽ <strong>bắt đầu tính thời gian</strong> ngay khi bạn bấm nút "Bắt Đầu Làm Bài".</li>
+                <li>Làm sai bất kỳ <strong>câu hỏi điểm liệt</strong> nào, bài thi sẽ bị tính là <strong>Không Đạt</strong> ngay lập tức.</li>
+              `}
+              <li>Phím <kbd class="kbd">1</kbd> - <kbd class="kbd">4</kbd> để chọn đáp án, phím <kbd class="kbd">Enter ↵</kbd> hoặc <kbd class="kbd">←</kbd> <kbd class="kbd">→</kbd> để chuyển câu hỏi.</li>
             </ul>
           </div>
 
@@ -294,7 +307,23 @@ export class ExamView extends BaseView {
     if (state.isExamSubmitted) return; // Answer locked
 
     const currentQ = state.examQuestions[state.currentExamIndex];
+    if (!currentQ) return;
+
+    // In quick exam (instant feedback mode), once chosen, lock the answer
+    if (this.examType === 'quick' && state.userAnswers[currentQ.id] !== undefined) {
+      return;
+    }
+
     const newUserAnswers = { ...state.userAnswers, [currentQ.id]: optionIndex };
+
+    // Record wrong questions immediately in quick exam mode
+    if (this.examType === 'quick') {
+      const isCorrect = Number(optionIndex) === Number(currentQ.correct_option);
+      if (!isCorrect && !this.recordedWrongIds.has(currentQ.id)) {
+        this.recordedWrongIds.add(currentQ.id);
+        StorageService.recordWrongQuestion(currentQ.id);
+      }
+    }
 
     store.setState({ userAnswers: newUserAnswers });
     this.render();
@@ -313,10 +342,19 @@ export class ExamView extends BaseView {
     const total = state.examQuestions.length;
     if (state.currentExamIndex < total - 1) {
       store.setState({ currentExamIndex: state.currentExamIndex + 1 });
+      this.render();
     } else {
+      // In quick exam mode, if at last question and all answered, submit to show final summary
+      if (this.examType === 'quick' && !state.isExamSubmitted) {
+        const answeredCount = Object.keys(state.userAnswers).length;
+        if (answeredCount === total) {
+          this.finalizeSubmission();
+          return;
+        }
+      }
       store.setState({ currentExamIndex: 0 });
+      this.render();
     }
-    this.render();
   }
 
   toggleBookmark(questionId) {
@@ -364,7 +402,12 @@ export class ExamView extends BaseView {
       wrongQuestionIds: examResult.wrongQuestionIds
     });
 
-    examResult.wrongQuestionIds.forEach(id => StorageService.recordWrongQuestion(id));
+    examResult.wrongQuestionIds.forEach(id => {
+      if (!this.recordedWrongIds.has(id)) {
+        this.recordedWrongIds.add(id);
+        StorageService.recordWrongQuestion(id);
+      }
+    });
 
     store.setState({
       isExamSubmitted: true,
@@ -397,11 +440,26 @@ export class ExamView extends BaseView {
       return;
     }
 
+    // In quick exam mode, pressing Enter when current question is answered moves to next question
+    if (key === 'Enter') {
+      const currentQ = state.examQuestions[state.currentExamIndex];
+      const isAnswered = currentQ && state.userAnswers[currentQ.id] !== undefined;
+      if (this.examType === 'quick' && isAnswered) {
+        event.preventDefault();
+        this.nextQuestion();
+        return;
+      }
+    }
+
     // 1-4 for options
     if (['1', '2', '3', '4'].includes(key)) {
       const optNum = Number(key);
       const currentQ = state.examQuestions[state.currentExamIndex];
       if (currentQ && optNum <= currentQ.options.length) {
+        // If quick exam and already answered, lock to prevent changing
+        if (this.examType === 'quick' && state.userAnswers[currentQ.id] !== undefined) {
+          return;
+        }
         this.selectOption(optNum);
       }
     }

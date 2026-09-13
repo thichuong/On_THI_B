@@ -316,6 +316,17 @@
   box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
 }
 
+.btn-submit-exam.btn-ready-submit {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.45);
+  animation: pulse-submit 1.5s infinite alternate;
+}
+
+@keyframes pulse-submit {
+  from { transform: scale(1); box-shadow: 0 4px 18px rgba(245, 158, 11, 0.45); }
+  to { transform: scale(1.02); box-shadow: 0 6px 24px rgba(245, 158, 11, 0.7); }
+}
+
 @media (max-width: 768px) {
   .exam-sidebar {
     position: static;

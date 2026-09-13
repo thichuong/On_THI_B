@@ -13,6 +13,7 @@ export class QuestionPalette {
    * @param {Object} options.answers Map of { [questionId]: selectedOption }
    * @param {boolean} [options.isSubmitted=false]
    * @param {boolean} [options.isPractice=false]
+   * @param {boolean} [options.isInstantFeedback=false]
    * @param {string} [options.title='Danh sách câu']
    * @returns {string} HTML string
    */
@@ -22,6 +23,7 @@ export class QuestionPalette {
     answers = {},
     isSubmitted = false,
     isPractice = false,
+    isInstantFeedback = false,
     title = 'Danh sách câu'
   }) {
     const total = questions.length;
@@ -49,7 +51,7 @@ export class QuestionPalette {
           <span class="palette-title">${title} (${total})</span>
           <span class="palette-stats">
             Đã làm: ${answeredCount}/${total}
-            ${isPractice && answeredCount > 0 ? `<br><span style="color: var(--success); font-weight: 700;">${correctCount} Đúng</span> • <span style="color: var(--danger); font-weight: 700;">${wrongCount} Sai</span>` : ''}
+            ${(isPractice || isInstantFeedback) && answeredCount > 0 ? `<br><span style="color: var(--success); font-weight: 700;">${correctCount} Đúng</span> • <span style="color: var(--danger); font-weight: 700;">${wrongCount} Sai</span>` : ''}
           </span>
         </div>
 
@@ -75,9 +77,15 @@ export class QuestionPalette {
               } else {
                 cls += ' incorrect-mark';
               }
-            } else if (isPractice && isAnswered) {
+            } else if ((isPractice || isInstantFeedback) && isAnswered) {
               const isCorrect = Number(ans) === Number(q.correct_option);
-              cls += isCorrect ? ' correct-mark' : ' incorrect-mark';
+              if (isCorrect) {
+                cls += ' correct-mark';
+              } else if (q.is_critical) {
+                cls += ' critical-failed-mark';
+              } else {
+                cls += ' incorrect-mark';
+              }
             }
 
             return `
@@ -89,7 +97,7 @@ export class QuestionPalette {
         </div>
 
         <div class="palette-legend">
-          ${isPractice ? `
+          ${(isPractice || isInstantFeedback) ? `
             <div class="legend-item">
               <span class="legend-dot" style="background: var(--success); border-color: var(--success);"></span>
               <span>Đúng (${correctCount})</span>

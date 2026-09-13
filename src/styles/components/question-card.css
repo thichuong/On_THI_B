@@ -219,6 +219,28 @@
   40%, 80% { transform: translateX(4px); }
 }
 
+/* Option item locked (after answered in instant feedback mode) */
+.option-item.locked {
+  cursor: default;
+}
+
+.option-item.locked:hover {
+  transform: none;
+}
+
+/* Critical warning alert box for feedback */
+.practice-feedback.critical-warning-box {
+  background: rgba(239, 68, 68, 0.2) !important;
+  border: 1.5px solid #ef4444 !important;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.35);
+  animation: shake 0.4s ease-in-out;
+}
+
+[data-theme="light"] .practice-feedback.critical-warning-box {
+  background: #fef2f2 !important;
+  border-color: #ef4444 !important;
+}
+
 /* Explanation Box */
 .explanation-box {
   background: rgba(99, 102, 241, 0.08);

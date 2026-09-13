@@ -29,6 +29,7 @@ export class QuestionCard {
     isSubmitted = false,
     isReviewMode = false,
     isPractice = false,
+    isInstantFeedback = false,
     showInstantAnswer = false,
     badgePrefix = '',
     badgeStyle = ''
@@ -37,11 +38,11 @@ export class QuestionCard {
 
     const isBookmarked = StorageService.isBookmarked(question.id);
     const isAnswered = userAnswer !== undefined && userAnswer !== null;
-    const isRevealed = isSubmitted || (isPractice && (showInstantAnswer || isAnswered));
+    const isRevealed = isSubmitted || (isPractice && (showInstantAnswer || isAnswered)) || (isInstantFeedback && isAnswered);
 
-    // Feedback banner for practice mode
+    // Feedback banner for practice mode and instant feedback exam mode
     let feedbackHtml = '';
-    if (isPractice && isAnswered) {
+    if ((isPractice || isInstantFeedback) && isAnswered) {
       if (Number(userAnswer) === Number(question.correct_option)) {
         feedbackHtml = `
           <div class="practice-feedback correct">
@@ -52,11 +53,17 @@ export class QuestionCard {
           </div>
         `;
       } else {
+        const isCriticalFail = question.is_critical;
         feedbackHtml = `
-          <div class="practice-feedback incorrect">
-            <span class="feedback-icon">❌</span>
+          <div class="practice-feedback incorrect ${isCriticalFail ? 'critical-warning-box' : ''}">
+            <span class="feedback-icon">${isCriticalFail ? '🚨' : '❌'}</span>
             <div class="feedback-text">
               <strong>Chưa chính xác!</strong> Bạn đã chọn ý <strong>#${userAnswer}</strong>, đáp án đúng là ý <strong>#${question.correct_option}</strong>.
+              ${isCriticalFail ? `
+                <div style="margin-top: 0.35rem; color: #ef4444; font-weight: 700;">
+                  ⚠️ ĐÂY LÀ CÂU HỎI ĐIỂM LIỆT! Làm sai câu này đồng nghĩa bài thi sẽ BỊ TRƯỢT (Không Đạt).
+                </div>
+              ` : ''}
             </div>
           </div>
         `;
@@ -103,12 +110,15 @@ export class QuestionCard {
                 optClass += ' incorrect';
                 statusIconHtml = `<span class="option-status-icon incorrect">❌</span>`;
               }
+              if (isInstantFeedback && isAnswered) {
+                optClass += ' locked';
+              }
             } else if (isUserSelected) {
               optClass += ' selected';
             }
 
             return `
-              <button class="${optClass}" data-option-num="${optNum}">
+              <button class="${optClass}" data-option-num="${optNum}" ${isInstantFeedback && isAnswered ? 'aria-disabled="true"' : ''}>
                 <span class="option-key">${optNum}</span>
                 <span class="option-text">${escapeHtml(optText)}</span>
                 ${statusIconHtml}
@@ -121,13 +131,13 @@ export class QuestionCard {
           <div class="explanation-box">
             ${feedbackHtml}
             <div class="explanation-title">
-              <span>💡 ${isPractice ? 'Đáp án chuẩn & Lời khuyên chi tiết' : 'Giải thích chi tiết & Đáp án đúng'}</span>
+              <span>💡 ${isPractice ? 'Đáp án chuẩn & Lời khuyên chi tiết' : (isInstantFeedback ? 'Kết quả & Giải thích chi tiết' : 'Giải thích chi tiết & Đáp án đúng')}</span>
             </div>
             <div class="explanation-content">
               <strong>Đáp án đúng: Ý số ${question.correct_option}.</strong> ${question.explanation || (question.is_critical ? 'Đây là câu hỏi mất an toàn giao thông nghiêm trọng (câu điểm liệt), người lái xe bắt buộc phải nắm rõ và chấp hành nghiêm túc.' : 'Căn cứ theo Luật Trật tự, an toàn giao thông đường bộ và Quy chuẩn Báo hiệu đường bộ 2025.')}
             </div>
           </div>
-        ` : (isPractice ? `
+        ` : ((isPractice || isInstantFeedback) ? `
           <div class="practice-hint-placeholder">
             <span>👉 Bấm chọn một đáp án ở trên để kiểm tra kết quả ngay lập tức</span>
           </div>
@@ -152,16 +162,28 @@ export class QuestionCard {
                 <span>👁️ Luôn hiện đáp án & giải thích</span>
               </label>
             </div>
+          ` : (isInstantFeedback ? `
+            <div class="keyboard-hints">
+              ${isAnswered ? `
+                <span style="color: var(--success); font-weight: 600;">✓ Đã ghi nhận</span>
+                <span>|</span>
+                <span>Phím <span class="kbd">Enter ↵</span> / <span class="kbd">→</span>: Câu tiếp</span>
+              ` : `
+                <span>Phím <span class="kbd">1-4</span>: Chọn đáp án</span>
+                <span>|</span>
+                <span>Phím <span class="kbd">←</span> <span class="kbd">→</span>: Chuyển câu</span>
+              `}
+            </div>
           ` : `
             <div class="keyboard-hints">
               <span>Phím <span class="kbd">1-4</span>: Chọn đáp án</span>
               <span>|</span>
               <span>Phím <span class="kbd">←</span> <span class="kbd">→</span>: Chuyển câu</span>
             </div>
-          `}
+          `)}
 
           <button class="btn-nav btn-primary" id="btn-next-question" ${isPractice && currentIndex === totalQuestions - 1 ? 'disabled' : ''}>
-            ${!isPractice && currentIndex === totalQuestions - 1 ? (isSubmitted ? 'Xem lại từ đầu' : 'Xem câu 1 ➡️') : 'Câu tiếp ➡️'} <span class="kbd">→</span>
+            ${!isPractice && currentIndex === totalQuestions - 1 ? (isSubmitted ? 'Xem lại từ đầu' : (isInstantFeedback ? 'Xem kết quả 🏁' : 'Xem câu 1 ➡️')) : 'Câu tiếp ➡️'} <span class="kbd">→</span>
           </button>
         </div>
       </div>
@@ -194,6 +216,7 @@ export class QuestionCard {
     // Option clicks
     container.querySelectorAll('.option-item[data-option-num]').forEach(btn => {
       btn.addEventListener('click', () => {
+        if (btn.classList.contains('locked')) return;
         const optNum = Number(btn.dataset.optionNum);
         if (typeof onSelectOption === 'function') {
           onSelectOption(optNum);

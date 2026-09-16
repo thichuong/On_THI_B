@@ -90,8 +90,9 @@ class QuestionService {
         const matchesId = String(item.id).includes(q);
         const matchesQuestion = item.question.toLowerCase().includes(q);
         const matchesOptions = item.options.some(opt => opt.toLowerCase().includes(q));
+        const matchesExplanation = item.explanation && item.explanation.toLowerCase().includes(q);
 
-        if (!matchesId && !matchesQuestion && !matchesOptions) {
+        if (!matchesId && !matchesQuestion && !matchesOptions && !matchesExplanation) {
           return false;
         }
       }

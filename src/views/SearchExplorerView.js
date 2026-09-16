@@ -86,6 +86,17 @@ export class SearchExplorerView extends BaseView {
                 </div>
               `).join('')}
             </div>
+
+            ${q.explanation ? `
+              <div class="explanation-box" style="margin-top: 1rem;">
+                <div class="explanation-title">
+                  <span>💡 Giải thích chi tiết & Đáp án đúng</span>
+                </div>
+                <div class="explanation-content">
+                  <strong>Đáp án đúng: Ý số ${q.correct_option}.</strong> ${escapeHtml(q.explanation)}
+                </div>
+              </div>
+            ` : ''}
           </div>
         `).join('')}
 

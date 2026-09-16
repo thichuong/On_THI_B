@@ -37,3 +37,25 @@ export function $$(selector, context = document) {
   return context.querySelectorAll(selector);
 }
 
+/**
+ * Smoothly scrolls the viewport to the question card, taking into account
+ * the sticky app header height.
+ * @param {boolean} [smooth=true]
+ */
+export function scrollToQuestion(smooth = true) {
+  if (typeof window === 'undefined') return;
+  const target = document.getElementById('question-card-wrapper') || document.querySelector('.question-card');
+  if (!target) return;
+
+  const header = document.querySelector('.app-header');
+  const headerHeight = header ? header.getBoundingClientRect().height : 0;
+  const targetTop = target.getBoundingClientRect().top + window.pageYOffset;
+  const offsetPosition = Math.max(0, targetTop - headerHeight - 12);
+
+  window.scrollTo({
+    top: offsetPosition,
+    behavior: smooth ? 'smooth' : 'auto'
+  });
+}
+
+

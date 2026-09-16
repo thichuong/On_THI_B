@@ -7,7 +7,7 @@ import { questionService, CHAPTERS } from '../services/questionService.js';
 import { StorageService } from '../services/storageService.js';
 import { QuestionCard } from '../components/QuestionCard.js';
 import { QuestionPalette } from '../components/QuestionPalette.js';
-import { $ } from '../utils/dom.js';
+import { $, scrollToQuestion } from '../utils/dom.js';
 
 export class ChapterView extends BaseView {
   constructor() {
@@ -119,6 +119,7 @@ export class ChapterView extends BaseView {
     QuestionPalette.bindEvents(this.container, (idx) => {
       store.setState({ currentPracticeIndex: idx });
       this.render();
+      scrollToQuestion();
     });
 
     // Restore scroll
@@ -157,6 +158,7 @@ export class ChapterView extends BaseView {
     if (state.currentPracticeIndex > 0) {
       store.setState({ currentPracticeIndex: state.currentPracticeIndex - 1 });
       this.render();
+      scrollToQuestion();
     }
   }
 
@@ -165,6 +167,7 @@ export class ChapterView extends BaseView {
     if (state.currentPracticeIndex < this.questions.length - 1) {
       store.setState({ currentPracticeIndex: state.currentPracticeIndex + 1 });
       this.render();
+      scrollToQuestion();
     }
   }
 

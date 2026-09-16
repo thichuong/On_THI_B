@@ -15,6 +15,7 @@
   gap: 1.5rem;
   position: relative;
   transition: border-color var(--transition-fast);
+  scroll-margin-top: calc(var(--header-height, 65px) + 1.25rem);
 }
 
 .question-header {
@@ -269,13 +270,27 @@
 
 /* Navigation Controls Bottom Bar */
 .question-controls {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
   border-top: 1px solid var(--border-color);
   padding-top: 1.25rem;
-  flex-wrap: wrap;
+}
+
+#btn-prev-question {
+  grid-column: 1;
+}
+
+.question-controls-center {
+  grid-column: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#btn-next-question {
+  grid-column: 3;
 }
 
 .keyboard-hints {
@@ -290,6 +305,7 @@
   .question-card {
     padding: 1.25rem 1rem;
     border-radius: var(--radius-lg);
+    scroll-margin-top: calc(var(--header-height, 60px) + 0.75rem);
   }
 
   .question-title {
@@ -297,8 +313,40 @@
   }
 
   .question-controls {
-    flex-direction: column;
-    gap: 0.75rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "prev next"
+      "center center";
+    gap: 0.65rem;
+  }
+
+  #btn-prev-question {
+    grid-area: prev;
+    width: 100%;
+    justify-content: center;
+    padding: 0.7rem 0.5rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  #btn-next-question {
+    grid-area: next;
+    width: 100%;
+    justify-content: center;
+    padding: 0.7rem 0.5rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  .question-controls-center {
+    grid-area: center;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .question-controls .btn-nav .kbd {
+    display: none;
   }
 
   .keyboard-hints {

@@ -170,7 +170,7 @@ export class QuestionCard {
           </button>
 
           ${isPractice ? `
-            <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+            <div class="question-controls-center" style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
               ${isAnswered ? `
                 <button class="btn-nav btn-sm" id="btn-reset-practice" title="Chọn lại đáp án cho câu này">
                   🔄 Chọn lại <span class="kbd">R</span>
@@ -183,7 +183,7 @@ export class QuestionCard {
               </label>
             </div>
           ` : (isInstantFeedback ? `
-            <div class="keyboard-hints">
+            <div class="keyboard-hints question-controls-center">
               ${isAnswered ? `
                 <span style="color: var(--success); font-weight: 600;">✓ Đã ghi nhận</span>
                 <span>|</span>
@@ -195,7 +195,7 @@ export class QuestionCard {
               `}
             </div>
           ` : `
-            <div class="keyboard-hints">
+            <div class="keyboard-hints question-controls-center">
               <span>Phím <span class="kbd">1-4</span>: Chọn đáp án</span>
               <span>|</span>
               <span>Phím <span class="kbd">←</span> <span class="kbd">→</span>: Chuyển câu</span>

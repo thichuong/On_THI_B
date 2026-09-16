@@ -12,7 +12,7 @@ import { QuestionCard } from '../components/QuestionCard.js';
 import { QuestionPalette } from '../components/QuestionPalette.js';
 import { confirmModal } from '../components/ConfirmModal.js';
 import { resultModal } from '../components/ResultModal.js';
-import { $ } from '../utils/dom.js';
+import { $, scrollToQuestion } from '../utils/dom.js';
 
 export class ExamView extends BaseView {
   constructor(examType = 'standard', quickSubMode = 'new') {
@@ -454,6 +454,7 @@ export class ExamView extends BaseView {
     QuestionPalette.bindEvents(this.container, (idx) => {
       store.setState({ currentExamIndex: idx });
       this.render();
+      scrollToQuestion();
     });
 
     // Submit button
@@ -513,6 +514,7 @@ export class ExamView extends BaseView {
     if (state.currentExamIndex > 0) {
       store.setState({ currentExamIndex: state.currentExamIndex - 1 });
       this.render();
+      scrollToQuestion();
     }
   }
 
@@ -522,6 +524,7 @@ export class ExamView extends BaseView {
     if (state.currentExamIndex < total - 1) {
       store.setState({ currentExamIndex: state.currentExamIndex + 1 });
       this.render();
+      scrollToQuestion();
     } else {
       // In quick exam mode, if at last question and all answered, submit to show final summary
       if (this.examType === 'quick' && !state.isExamSubmitted) {
@@ -533,6 +536,7 @@ export class ExamView extends BaseView {
       }
       store.setState({ currentExamIndex: 0 });
       this.render();
+      scrollToQuestion();
     }
   }
 

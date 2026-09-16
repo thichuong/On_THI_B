@@ -290,11 +290,13 @@ PART11_EXPLANATIONS = {
          "- Xe con màu vàng đi từ đường nhánh ra (gặp biển tam giác ngược W.208) phải nhường đường cho xe trên đường ưu tiên.\n"
          "Do đó XE CỦA BẠN ĐƯỢC ĐI TRƯỚC xe con.",
 
-    589: "Áp dụng quy tắc hướng rẽ ưu tiên tại ngã tư đồng cấp:\n"
-         "- Nơi giao nhau không có biển báo ưu tiên, các phương tiện cùng cấp. Áp dụng quy tắc hướng đi ưu tiên ('Phải > Thẳng > Trái'):\n"
-         "  1. Xe tải rẽ phải -> Đi đầu tiên.\n"
-         "  2. Xe con đi thẳng -> Đi thứ 2.\n"
-         "  3. Xe của bạn rẽ trái (đèn xi-nhan trái bật sáng) -> Đi sau cùng (thứ 3).\n"
+    589: "Áp dụng quy tắc 'Bên phải không vướng' tại ngã tư đồng cấp:\n"
+         "- Nơi giao nhau không có biển báo, không có xe ưu tiên, các phương tiện cùng cấp.\n"
+         "- Hướng đi của các xe: Xe tải đi thẳng, xe con đi thẳng, xe của bạn rẽ trái (đèn xi-nhan trái bật sáng).\n"
+         "- Xét quyền ưu tiên bên phải:\n"
+         "  1. Phía bên phải của Xe tải (nhánh đường bên trái xe bạn) hoàn toàn trống -> Xe tải đi đầu tiên.\n"
+         "  2. Sau khi xe tải đi qua, phía bên phải của Xe con không còn vướng -> Xe con đi thứ 2.\n"
+         "  3. Sau khi xe con đi qua, bên phải xe của bạn thông thoáng. Đồng thời xe của bạn rẽ trái nên đi sau cùng.\n"
          "Thứ tự đúng: Xe tải -> Xe con -> Xe của bạn.",
 
     590: "Kỹ năng xử lý an toàn khi gặp xe ngược chiều và người đi xe đạp cùng chiều:\n"

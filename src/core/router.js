@@ -25,7 +25,7 @@ class Router {
 
     // Register standard routes
     this.register('exam', () => new ExamView('standard'));
-    this.register('quick-exam', () => new ExamView('quick'));
+    this.register('quick-exam', (subMode) => new ExamView('quick', subMode || 'new'));
     this.register('critical', () => new PracticeView('critical', '60 Câu Hỏi Điểm Liệt (Bắt Buộc Đúng)'));
     this.register('chapter', () => new ChapterView());
     this.register('all', () => new SearchExplorerView());
@@ -51,17 +51,25 @@ class Router {
 
   /**
    * Navigate to a mode
-   * @param {string} mode
+   * @param {string|Object} target mode name or { mode, subMode }
+   * @param {Object} [params={}]
    */
-  navigate(mode) {
+  navigate(target, params = {}) {
+    let mode = typeof target === 'object' ? target.mode : target;
+    const subMode = typeof target === 'object' ? target.subMode : (params.subMode || null);
+
     if (!this.routes.has(mode)) {
       console.warn(`Unknown mode: "${mode}", falling back to "exam"`);
       mode = 'exam';
     }
 
-    // If same mode and view is already mounted, re-render if needed
+    // If same mode and view is already mounted, re-render or update subMode
     if (this.currentMode === mode && this.currentView) {
-      this.currentView.render();
+      if (subMode && typeof this.currentView.setSubMode === 'function') {
+        this.currentView.setSubMode(subMode);
+      } else {
+        this.currentView.render();
+      }
       return;
     }
 
@@ -79,7 +87,7 @@ class Router {
 
     // Create and mount new view
     const viewFactory = this.routes.get(mode);
-    this.currentView = viewFactory();
+    this.currentView = viewFactory(subMode);
     this.currentView.mount(this.container);
   }
 

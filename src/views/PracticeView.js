@@ -80,6 +80,21 @@ export class PracticeView extends BaseView {
     });
 
     this.container.innerHTML = `
+      ${this.mode === 'mistakes' ? `
+        <div class="mistakes-header-actions" style="margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; background: var(--bg-card); padding: 0.85rem 1.25rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+          <div>
+            <div style="font-weight: 700; color: #ef4444; display: flex; align-items: center; gap: 0.5rem; font-size: 1rem;">
+              <span>❌ Danh sách ${totalQuestions} câu hỏi bạn đã làm sai</span>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;">
+              Ôn tập kỹ từng câu hoặc bấm nút bên cạnh để làm bài thi nhanh 20 câu sai có bấm giờ (làm đúng sẽ xóa khỏi danh sách).
+            </div>
+          </div>
+          <button id="btn-quick-exam-wrong" class="btn-nav" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff; font-weight: 700; border: none; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);">
+            ⚡ Thi Nhanh 20 Câu Sai Này
+          </button>
+        </div>
+      ` : ''}
       <div class="exam-layout">
         <div id="question-card-wrapper">
           ${questionCardHtml}
@@ -134,6 +149,13 @@ export class PracticeView extends BaseView {
     QuestionPalette.bindEvents(this.container, (idx) => {
       store.setState({ currentPracticeIndex: idx });
       this.render();
+    });
+
+    // Quick exam wrong questions button
+    $('#btn-quick-exam-wrong', this.container)?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('app:navigate', {
+        detail: { mode: 'quick-exam', subMode: 'retry_wrong' }
+      }));
     });
 
     // Restore scroll position

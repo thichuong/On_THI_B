@@ -31,6 +31,7 @@ export class QuestionCard {
     isPractice = false,
     isInstantFeedback = false,
     showInstantAnswer = false,
+    isWrongRedo = false,
     badgePrefix = '',
     badgeStyle = ''
   }) {
@@ -44,14 +45,28 @@ export class QuestionCard {
     let feedbackHtml = '';
     if ((isPractice || isInstantFeedback) && isAnswered) {
       if (Number(userAnswer) === Number(question.correct_option)) {
-        feedbackHtml = `
-          <div class="practice-feedback correct">
-            <span class="feedback-icon">🎉</span>
-            <div class="feedback-text">
-              <strong>Chính xác!</strong> Bạn đã chọn đúng đáp án <strong>#${question.correct_option}</strong>.
+        if (isWrongRedo) {
+          feedbackHtml = `
+            <div class="practice-feedback correct" style="border-color: #10b981; background: rgba(16, 185, 129, 0.15);">
+              <span class="feedback-icon">🎉</span>
+              <div class="feedback-text">
+                <strong>Chính xác tuyệt vời!</strong> Bạn đã trả lời đúng đáp án <strong>#${question.correct_option}</strong>.<br/>
+                <span style="color: #10b981; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.25rem;">
+                  ✨ Đã xóa câu này khỏi danh sách câu sai!
+                </span>
+              </div>
             </div>
-          </div>
-        `;
+          `;
+        } else {
+          feedbackHtml = `
+            <div class="practice-feedback correct">
+              <span class="feedback-icon">🎉</span>
+              <div class="feedback-text">
+                <strong>Chính xác!</strong> Bạn đã chọn đúng đáp án <strong>#${question.correct_option}</strong>.
+              </div>
+            </div>
+          `;
+        }
       } else {
         const isCriticalFail = question.is_critical;
         feedbackHtml = `
@@ -62,6 +77,11 @@ export class QuestionCard {
               ${isCriticalFail ? `
                 <div style="margin-top: 0.35rem; color: #ef4444; font-weight: 700;">
                   ⚠️ ĐÂY LÀ CÂU HỎI ĐIỂM LIỆT! Làm sai câu này đồng nghĩa bài thi sẽ BỊ TRƯỢT (Không Đạt).
+                </div>
+              ` : ''}
+              ${isWrongRedo ? `
+                <div style="margin-top: 0.35rem; color: #f59e0b; font-size: 0.85rem; font-weight: 600;">
+                  📌 Câu này vẫn được giữ lại trong danh sách câu sai để bạn ôn tiếp.
                 </div>
               ` : ''}
             </div>

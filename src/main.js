@@ -6,6 +6,7 @@ import './styles/main.css';
 import { header } from './components/Header.js';
 import { router } from './core/router.js';
 import { keyboardManager } from './utils/keyboard.js';
+import { StorageService } from './services/storageService.js';
 // Initialize lightbox listener
 import './components/LightboxModal.js';
 import { $ } from './utils/dom.js';
@@ -16,6 +17,9 @@ function initApp() {
     console.error('Root element #app-main not found in DOM');
     return;
   }
+
+  // Initialize persistent storage (IndexedDB + cache)
+  StorageService.init();
 
   // Initialize header navigation and theme toggle
   header.init({

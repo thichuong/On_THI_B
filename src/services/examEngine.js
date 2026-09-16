@@ -55,6 +55,25 @@ export class ExamEngine {
    * @returns {Array} Array of questions prepared for the exam
    */
   static generateExam(allQuestions, examType = 'standard', options = {}) {
+    // 0. Special Mode: Làm lại câu sai (wrong_redo)
+    if (options.mode === 'wrong_redo') {
+      const wrongIds = new Set((options.wrongQuestionIds || []).map(Number));
+      let wrongPool = allQuestions.filter(q => wrongIds.has(q.id));
+      if (options.shuffleQuestions !== false) {
+        wrongPool = this.shuffleArray(wrongPool);
+      }
+      const limit = Math.min(wrongPool.length, options.totalQuestions || 20);
+      const selected = wrongPool.slice(0, limit);
+      const result = selected.map((q, index) => ({
+        ...q,
+        examIndex: index + 1
+      }));
+      result.isWrongRedo = true;
+      result.isCycleReset = false;
+      result.newlySelectedIds = result.map(q => q.id);
+      return result;
+    }
+
     const preset = EXAM_PRESETS[examType] || EXAM_PRESETS.standard;
     const {
       totalQuestions = preset.totalQuestions,
@@ -62,12 +81,34 @@ export class ExamEngine {
       maxCritical = preset.maxCritical,
       chapterQuotas = preset.chapterQuotas,
       shuffleQuestions = true,
-      shuffleOptions = false
+      shuffleOptions = false,
+      seenQuestionIds = null
     } = options;
 
-    // Filter into categories
-    const criticalQuestions = allQuestions.filter(q => q.is_critical);
-    const nonCriticalQuestions = allQuestions.filter(q => !q.is_critical);
+    // 1. Check unseen pool and cycle reset condition
+    let workingPool = allQuestions;
+    let isCycleReset = false;
+
+    if (seenQuestionIds && seenQuestionIds.size > 0) {
+      const unseenPool = allQuestions.filter(q => !seenQuestionIds.has(q.id));
+      const unseenCriticalCount = unseenPool.filter(q => q.is_critical).length;
+
+      // Only pick from unseen if there are enough questions and critical questions
+      if (unseenPool.length >= totalQuestions && unseenCriticalCount >= minCritical) {
+        workingPool = unseenPool;
+      } else {
+        // Not enough questions in the cycle -> auto reset cycle!
+        isCycleReset = true;
+        workingPool = allQuestions;
+        if (typeof options.onCycleReset === 'function') {
+          options.onCycleReset();
+        }
+      }
+    }
+
+    // Filter into categories from working pool
+    const criticalQuestions = workingPool.filter(q => q.is_critical);
+    const nonCriticalQuestions = workingPool.filter(q => !q.is_critical);
 
     // Group non-critical by chapter
     const byChapter = {
@@ -79,13 +120,16 @@ export class ExamEngine {
       6: nonCriticalQuestions.filter(q => q.chapter === 6)
     };
 
-    // 1. Pick critical questions randomly (at least minCritical)
-    const criticalCount = Math.floor(Math.random() * (maxCritical - minCritical + 1)) + minCritical;
+    // 2. Pick critical questions randomly (at least minCritical)
+    const criticalCount = Math.min(
+      criticalQuestions.length,
+      Math.floor(Math.random() * (maxCritical - minCritical + 1)) + minCritical
+    );
     const shuffledCritical = this.shuffleArray([...criticalQuestions]);
     const selectedCritical = shuffledCritical.slice(0, criticalCount);
     const selectedIds = new Set(selectedCritical.map(q => q.id));
 
-    // 2. Distribute remaining questions across chapters
+    // 3. Distribute remaining questions across chapters
     const adjustedQuotas = { ...chapterQuotas };
     // Adjust chapter quota if critical question belonged there
     selectedCritical.forEach(cq => {
@@ -100,18 +144,21 @@ export class ExamEngine {
       const available = pool.filter(q => !selectedIds.has(q.id));
       const shuffledPool = this.shuffleArray([...available]);
       const needed = Math.max(0, quota);
-      const chosen = shuffledPool.slice(0, needed);
+      const chosen = shuffledPool.slice(0, Math.min(needed, available.length));
       chosen.forEach(q => {
         selectedOthers.push(q);
         selectedIds.add(q.id);
       });
     }
 
-    // Fill any gap to ensure exact totalQuestions count
+    // Fill any gap from remaining non-critical pool first, fallback to working pool
     let totalNeeded = totalQuestions - (selectedCritical.length + selectedOthers.length);
     if (totalNeeded > 0) {
-      const remainingPool = nonCriticalQuestions.filter(q => !selectedIds.has(q.id));
-      const extra = this.shuffleArray([...remainingPool]).slice(0, totalNeeded);
+      const remainingNonCritical = nonCriticalQuestions.filter(q => !selectedIds.has(q.id));
+      const sourcePool = remainingNonCritical.length >= totalNeeded
+        ? remainingNonCritical
+        : workingPool.filter(q => !selectedIds.has(q.id));
+      const extra = this.shuffleArray([...sourcePool]).slice(0, totalNeeded);
       extra.forEach(q => {
         selectedOthers.push(q);
         selectedIds.add(q.id);
@@ -131,7 +178,7 @@ export class ExamEngine {
     }
 
     // Prepare questions (with clone so original is untouched)
-    return examSet.map((q, index) => {
+    const finalResult = examSet.map((q, index) => {
       const examQ = {
         ...q,
         examIndex: index + 1
@@ -147,6 +194,12 @@ export class ExamEngine {
 
       return examQ;
     });
+
+    finalResult.isWrongRedo = false;
+    finalResult.isCycleReset = isCycleReset;
+    finalResult.newlySelectedIds = finalResult.map(q => q.id);
+
+    return finalResult;
   }
 
   /**

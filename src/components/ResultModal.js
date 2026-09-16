@@ -16,13 +16,24 @@ export class ResultModal {
    * @param {Function} callbacks.onReview
    * @param {Function} callbacks.onRetry
    */
-  show(result, preset, { onReview, onRetry }) {
+  show(result, preset, { onReview, onRetry, isWrongRedo = false, fixedWrongCount = 0 }) {
     if (!this.modalEl || !result) return;
 
     const isPassed = result.passed;
     let statusHtml = '';
 
-    if (isPassed) {
+    if (isWrongRedo) {
+      const fixed = fixedWrongCount || result.score;
+      statusHtml = `
+        <div class="result-status-badge passed" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border-color: rgba(16, 185, 129, 0.4);">
+          <span>✨ HOÀN THÀNH ÔN LẠI CÂU SAI</span>
+        </div>
+        <p class="result-message" style="color: #34d399;">
+          Bạn đã sửa đúng và <strong>xóa thành công ${fixed}/${result.total} câu</strong> khỏi danh sách câu làm sai!
+          ${result.wrongCount > 0 ? `<br/><span style="color: #f59e0b; font-size: 0.875rem;">(Còn ${result.wrongCount} câu chưa chính xác vẫn được lưu lại để bạn tiếp tục rèn luyện).</span>` : '<br/><strong>Xuất sắc! Bạn đã giải quyết toàn bộ các câu hỏi này!</strong>'}
+        </p>
+      `;
+    } else if (isPassed) {
       statusHtml = `
         <div class="result-status-badge passed">
           <span>🎉 ĐẠT (${preset.shortName.toUpperCase()})</span>
@@ -76,7 +87,7 @@ export class ResultModal {
             🔍 Xem Lại Bài Thi Chi Tiết
           </button>
           <button class="btn-nav" id="btn-new-exam-modal">
-            🔄 Thi Đề Khác (Trộn ${result.total} câu mới)
+            ${isWrongRedo ? '🔄 Tiếp Tục Ôn Tập' : `🔄 Thi Đề Khác (Trộn ${result.total} câu mới)`}
           </button>
         </div>
       </div>

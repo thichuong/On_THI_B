@@ -85,12 +85,10 @@ PART10_EXPLANATIONS = {
          "- Làn đường của xe mô tô có tín hiệu ĐÈN ĐỎ nên bắt buộc phải dừng lại trước vạch dừng.\n"
          "Do đó: Xe con và xe khách được phép đi.",
 
-    500: "Quan sát đèn tín hiệu và hướng mũi tên của từng xe:\n"
-         "- Xe con: Ở làn rẽ phải, đèn xanh rẽ phải -> Rẽ phải là ĐÚNG.\n"
-         "- Xe tải: Ở làn đi thẳng, đèn xanh đi thẳng -> Đi thẳng là ĐÚNG.\n"
-         "- Xe khách: Ở làn rẽ trái có đèn đỏ cấm đi, nhưng xe lại đi -> SAI.\n"
-         "- Đối diện: Xe mô tô ở làn rẽ phải có đèn đỏ nhưng lại đi -> SAI.\n"
-         "Do đó: Xe con và xe tải đi đúng quy tắc giao thông.",
+    500: "Theo tín hiệu đèn, xe nào ở làn có đèn màu xanh thì được phép đi:\n"
+         "- Xe con và xe tải: Ở các làn có đèn tín hiệu màu xanh -> Được phép đi.\n"
+         "- Xe khách và xe mô tô: Ở các làn có đèn tín hiệu màu đỏ -> Phải dừng lại.\n"
+         "Do đó: Xe con và xe tải đi là đúng quy tắc giao thông.",
 
     501: "Thứ tự ưu tiên giữa các xe ưu tiên theo Luật:\n"
          "Quy tắc ưu tiên: 'Hỏa - Sự - Công - Thương'.\n"
@@ -108,12 +106,11 @@ PART10_EXPLANATIONS = {
          "- Xe mô tô: Ở làn rẽ phải gặp đèn xanh rẽ phải nhưng mũi tên lại rẽ trái sang làn đối diện -> Vi phạm hướng đi của làn đường.\n"
          "Vậy những xe vi phạm quy tắc giao thông gồm: Xe khách, xe tải, xe mô tô.",
 
-    504: "Áp dụng quy tắc hướng rẽ ưu tiên tại ngã tư đồng cấp có đảo xuyến:\n"
-         "Tại nơi giao nhau cùng cấp không có xe ưu tiên và không có biển báo, áp dụng thứ tự ưu tiên hướng đi ('Phải - Thẳng - Trái - Quay đầu'):\n"
-         "1. Xe mô tô rẽ phải đi ngay vào nhánh đường bên phải đầu tiên.\n"
-         "2. Xe tải đi thẳng qua ngã tư đi thứ 2.\n"
-         "3. Xe khách rẽ trái vòng qua đảo xuyến đi thứ 3.\n"
-         "4. Xe con đi vòng quay đầu xe đi sau cùng (thứ 4).\n"
+    504: "Tại nơi đường giao nhau cùng cấp không có biển báo và không có xe ưu tiên, áp dụng quy tắc ưu tiên theo thứ tự: Bên phải trống -> Rẽ phải -> Đi thẳng -> Rẽ trái -> Quay đầu:\n"
+         "- Xe mô tô: Bên phải trống (không có xe) và rẽ phải -> Đi đầu tiên (thứ 1).\n"
+         "- Sau khi xe mô tô đi, bên phải xe tải trống -> Xe tải đi thẳng (thứ 2).\n"
+         "- Sau khi xe tải đi, bên phải xe khách trống -> Xe khách rẽ trái (thứ 3).\n"
+         "- Xe con quay đầu đi sau cùng (thứ 4).\n"
          "Thứ tự đúng: Xe mô tô -> Xe tải -> Xe khách -> Xe con.",
 
     505: "Phân tích biển báo cấm và biển phụ:\n"
@@ -198,11 +195,10 @@ PART10_EXPLANATIONS = {
          "- Hướng 1 (rẽ phải), hướng 3 (rẽ trái), hướng 4 (quay đầu) không có biển cấm xe con.\n"
          "Do đó xe ô tô con ĐƯỢC PHÉP ĐI HƯỚNG 1, 3 VÀ 4.",
 
-    520: "Áp dụng thứ tự ưu tiên hướng đi tại ngã tư đồng cấp:\n"
-         "Ngã tư không có biển báo và không có xe ưu tiên, áp dụng quy tắc 'Phải - Thẳng - Trái':\n"
-         "1. Xe mô tô và xe đạp đều rẽ phải (hướng bên phải không vướng) -> Được đi đầu tiên.\n"
-         "2. Xe con (A) đi thẳng -> Được đi thứ 2.\n"
-         "3. Xe con (B) rẽ trái -> Đi sau cùng (thứ 3).\n"
+    520: "Tại nơi đường giao nhau cùng cấp không có biển báo và không có xe ưu tiên, áp dụng quy tắc ưu tiên theo thứ tự: Bên phải trống -> Rẽ phải -> Đi thẳng -> Rẽ trái -> Quay đầu:\n"
+         "- Xe mô tô và xe đạp: Bên phải trống (không có xe) và cùng rẽ phải -> Đi đầu tiên (thứ 1).\n"
+         "- Sau khi xe mô tô và xe đạp đi, bên phải xe con (A) trống -> Xe con (A) đi thẳng (thứ 2).\n"
+         "- Sau khi xe con (A) đi, bên phải xe con (B) trống -> Xe con (B) rẽ trái đi sau cùng (thứ 3).\n"
          "Thứ tự đúng: Xe mô tô + xe đạp -> Xe con (A) -> Xe con (B).",
 
     521: "Xét biển hiệu lệnh và biển phụ chỉ hướng:\n"
@@ -266,10 +262,12 @@ PART10_EXPLANATIONS = {
          "- Xe chữa cháy: Đang đi làm nhiệm vụ khẩn cấp có tín hiệu còi, đèn ưu tiên, được quyền đi vào đường có biển P.102 'Cấm đi ngược chiều' theo Luật Giao thông đường bộ.\n"
          "Do đó xe vi phạm quy tắc giao thông là XE TẢI.",
 
-    533: "Áp dụng thứ tự ưu tiên sa hình tại ngã ba:\n"
-         "1. Cả xe tải và xe khách đều gặp biển W.207 'Giao nhau với đường không ưu tiên' (đang đi trên đường ưu tiên).\n"
-         "2. Xe con đi từ đường nhánh ra (đường không ưu tiên) nên đi sau cùng.\n"
-         "3. Xét giữa xe tải và xe khách cùng trên đường ưu tiên: Xe tải rẽ phải đi trước (hướng rẽ ưu tiên), xe khách đi thẳng đi thứ 2.\n"
+    533: "Xét quy tắc ưu tiên tại nơi đường giao nhau cùng cấp:\n"
+         "- Xe con rẽ trái: Do hướng rẽ trái nên bên phải của xe con lúc này là xe khách (phải nhường cho xe đi thẳng).\n"
+         "- Xe khách đi thẳng: Phía bên phải của xe khách vướng xe tải (phải nhường cho xe tải).\n"
+         "- Xe tải rẽ phải: Phía bên phải xe tải không vướng xe nào (bên phải trống) nên xe tải được ưu tiên đi đầu tiên (thứ 1).\n"
+         "- Sau khi xe tải đi, bên phải xe khách đã trống -> Xe khách đi thẳng (thứ 2).\n"
+         "- Xe con hoàn tất rẽ trái đi sau cùng (thứ 3).\n"
          "Thứ tự đúng: Xe tải -> Xe khách -> Xe con.",
 
     534: "Phân tích hướng đi của các xe trên đường ưu tiên:\n"

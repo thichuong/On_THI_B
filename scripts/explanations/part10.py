@@ -70,10 +70,11 @@ PART10_EXPLANATIONS = {
          "- Xe khách rẽ trái cắt ngang giao lộ, vừa phải nhường đường cho xe trên đường ưu tiên (xe con), vừa phải nhường cho xe rẽ phải (xe tải).\n"
          "Do đó XE KHÁCH là xe phải nhường đường đi cuối cùng qua nơi giao nhau.",
 
-    497: "Phân tích biển báo và quy tắc hướng rẽ:\n"
-         "- Cả xe con và xe tải đều gặp biển tam giác ngược W.208 'Giao nhau với đường ưu tiên' kèm biển phụ S.506b thể hiện đường ưu tiên đi theo hướng cong sang nhánh khác. Cả hai xe đều đang ở trên đường nhánh không ưu tiên.\n"
-         "- Xét quy tắc hướng đi ưu tiên giữa hai xe cùng cấp: Xe tải đi thẳng được đi trước; xe con rẽ trái phải nhường đường cho xe đi thẳng.\n"
-         "Do đó XE CON PHẢI NHƯỜNG ĐƯỜNG cho xe tải.",
+    497: "Phân tích biển báo và quy tắc nhường đường tại nơi giao nhau:\n"
+         "- Về biển báo: Cả xe con và xe tải đều gặp biển tam giác ngược W.208 'Giao nhau với đường ưu tiên' kèm biển phụ S.506b thể hiện hướng đường ưu tiên. Do đó, cả hai xe đều đang ở trên đường nhánh không ưu tiên (cùng cấp).\n"
+         "- Về hướng đi: Theo hướng mũi tên, cả xe tải và xe con đều đi thẳng qua nơi giao nhau.\n"
+         "- Quy tắc nhường đường (Bên phải trống): Tại nơi giao nhau cùng cấp, xe nào có phía bên phải không vướng thì được quyền đi trước (nhường đường cho xe đến từ bên phải). Xe tải có phía bên phải trống nên được quyền đi trước; xe con có xe tải ở phía bên phải tới nên phải nhường đường.\n"
+         "Do đó XE CON PHẢI NHƯỜNG ĐƯỜNG là đúng quy tắc giao thông.",
 
     498: "Thứ tự xe ưu tiên theo Luật Giao thông đường bộ:\n"
          "Quy tắc ưu tiên: 'HỎA - SỰ - CÔNG - THƯƠNG'.\n"

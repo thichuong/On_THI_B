@@ -130,6 +130,15 @@ class DBService {
         }
       }
 
+      // 4. Migrate chapter progress
+      const rawChapterProg = localStorage.getItem('gplx_chapter_progress');
+      if (rawChapterProg) {
+        try {
+          const parsedProg = JSON.parse(rawChapterProg);
+          await this.setMeta('chapter_progress', parsedProg);
+        } catch {}
+      }
+
       await this.setMeta('localStorage_migrated', true);
       console.log('IndexedDB: Successfully migrated data from localStorage.');
     } catch (e) {

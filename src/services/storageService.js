@@ -4,6 +4,7 @@
  */
 import { eventBus } from '../core/eventBus.js';
 import { dbService } from './dbService.js';
+import { questionService } from './questionService.js';
 
 const STORAGE_KEYS = {
   THEME: 'gplx_theme',
@@ -12,7 +13,8 @@ const STORAGE_KEYS = {
   EXAM_HISTORY: 'gplx_exam_history',
   SETTINGS: 'gplx_settings',
   SEEN_STANDARD: 'gplx_seen_standard',
-  SEEN_QUICK: 'gplx_seen_quick'
+  SEEN_QUICK: 'gplx_seen_quick',
+  CHAPTER_PROGRESS: 'gplx_chapter_progress'
 };
 
 class StorageServiceImpl {
@@ -24,7 +26,8 @@ class StorageServiceImpl {
       bookmarks: null,
       wrongQuestions: null,
       seenStandard: null,
-      seenQuick: null
+      seenQuick: null,
+      chapterProgress: null
     };
   }
 
@@ -39,9 +42,10 @@ class StorageServiceImpl {
         await dbService.init();
 
         // Hydrate seen cycles from IndexedDB if available
-        const [stdCycle, qkCycle] = await Promise.all([
+        const [stdCycle, qkCycle, idbChapterProg] = await Promise.all([
           dbService.getExamCycle('standard'),
-          dbService.getExamCycle('quick')
+          dbService.getExamCycle('quick'),
+          dbService.getMeta('chapter_progress')
         ]);
 
         if (Array.isArray(stdCycle) && stdCycle.length > 0) {
@@ -52,6 +56,12 @@ class StorageServiceImpl {
         if (Array.isArray(qkCycle) && qkCycle.length > 0) {
           this._cache.seenQuick = new Set(qkCycle);
           localStorage.setItem(STORAGE_KEYS.SEEN_QUICK, JSON.stringify(qkCycle));
+        }
+
+        // Hydrate chapter progress from IndexedDB if localStorage does not have it
+        if (idbChapterProg && !localStorage.getItem(STORAGE_KEYS.CHAPTER_PROGRESS)) {
+          this._cache.chapterProgress = idbChapterProg;
+          localStorage.setItem(STORAGE_KEYS.CHAPTER_PROGRESS, JSON.stringify(idbChapterProg));
         }
 
         this._initialized = true;
@@ -309,6 +319,217 @@ class StorageServiceImpl {
     localStorage.removeItem(STORAGE_KEYS.EXAM_HISTORY);
     dbService.clearExamHistory().catch(() => {});
     eventBus.emit('examHistory:cleared');
+  }
+
+  // --- Chapter Progress ---
+
+  _getDefaultChapterProgress() {
+    const chapters = {};
+    for (let i = 1; i <= 6; i++) {
+      chapters[i] = {
+        lastIndex: 0,
+        answers: {},
+        updatedAt: null
+      };
+    }
+    return {
+      lastActiveChapter: 1,
+      chapters
+    };
+  }
+
+  getAllChapterProgress() {
+    if (this._cache.chapterProgress) return this._cache.chapterProgress;
+
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.CHAPTER_PROGRESS);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+          const def = this._getDefaultChapterProgress();
+          const merged = {
+            lastActiveChapter: parsed.lastActiveChapter || 1,
+            chapters: { ...def.chapters, ...(parsed.chapters || {}) }
+          };
+          this._cache.chapterProgress = merged;
+          return merged;
+        }
+      }
+    } catch {
+      // Fallback to default
+    }
+
+    const defaultProg = this._getDefaultChapterProgress();
+    this._cache.chapterProgress = defaultProg;
+    return defaultProg;
+  }
+
+  getChapterProgress(chapterId = null) {
+    const all = this.getAllChapterProgress();
+    if (chapterId === null) {
+      return all;
+    }
+    const chId = Number(chapterId);
+    if (!all.chapters[chId]) {
+      all.chapters[chId] = {
+        lastIndex: 0,
+        answers: {},
+        updatedAt: null
+      };
+    }
+    return all.chapters[chId];
+  }
+
+  saveChapterProgress(chapterId, data = {}) {
+    const chId = Number(chapterId);
+    const all = { ...this.getAllChapterProgress() };
+    const currentCh = all.chapters[chId] || { lastIndex: 0, answers: {}, updatedAt: null };
+
+    all.chapters[chId] = {
+      ...currentCh,
+      ...data,
+      updatedAt: new Date().toISOString()
+    };
+
+    this._cache.chapterProgress = all;
+    localStorage.setItem(STORAGE_KEYS.CHAPTER_PROGRESS, JSON.stringify(all));
+    dbService.setMeta('chapter_progress', all).catch(() => {});
+    eventBus.emit('chapterProgress:updated', { chapterId: chId, progress: all.chapters[chId] });
+  }
+
+  saveChapterAnswer(chapterId, questionId, selectedOption, index = null) {
+    const chId = Number(chapterId);
+    const qid = Number(questionId);
+    const opt = Number(selectedOption);
+
+    const all = { ...this.getAllChapterProgress() };
+    const currentCh = all.chapters[chId] || { lastIndex: 0, answers: {}, updatedAt: null };
+    const updatedAnswers = { ...(currentCh.answers || {}), [qid]: opt };
+
+    all.chapters[chId] = {
+      ...currentCh,
+      answers: updatedAnswers,
+      lastIndex: index !== null ? Math.max(0, Number(index)) : (currentCh.lastIndex || 0),
+      updatedAt: new Date().toISOString()
+    };
+
+    this._cache.chapterProgress = all;
+    localStorage.setItem(STORAGE_KEYS.CHAPTER_PROGRESS, JSON.stringify(all));
+    dbService.setMeta('chapter_progress', all).catch(() => {});
+    eventBus.emit('chapterProgress:updated', { chapterId: chId, questionId: qid, selectedOption: opt });
+  }
+
+  removeChapterAnswer(chapterId, questionId) {
+    const chId = Number(chapterId);
+    const qid = Number(questionId);
+
+    const all = { ...this.getAllChapterProgress() };
+    const currentCh = all.chapters[chId] || { lastIndex: 0, answers: {}, updatedAt: null };
+    const updatedAnswers = { ...(currentCh.answers || {}) };
+    delete updatedAnswers[qid];
+
+    all.chapters[chId] = {
+      ...currentCh,
+      answers: updatedAnswers,
+      updatedAt: new Date().toISOString()
+    };
+
+    this._cache.chapterProgress = all;
+    localStorage.setItem(STORAGE_KEYS.CHAPTER_PROGRESS, JSON.stringify(all));
+    dbService.setMeta('chapter_progress', all).catch(() => {});
+    eventBus.emit('chapterProgress:updated', { chapterId: chId, questionId: qid, removed: true });
+  }
+
+  saveChapterLastIndex(chapterId, index) {
+    const chId = Number(chapterId);
+    const all = { ...this.getAllChapterProgress() };
+    const currentCh = all.chapters[chId] || { lastIndex: 0, answers: {}, updatedAt: null };
+
+    all.chapters[chId] = {
+      ...currentCh,
+      lastIndex: Math.max(0, Number(index)),
+      updatedAt: new Date().toISOString()
+    };
+
+    this._cache.chapterProgress = all;
+    localStorage.setItem(STORAGE_KEYS.CHAPTER_PROGRESS, JSON.stringify(all));
+    dbService.setMeta('chapter_progress', all).catch(() => {});
+  }
+
+  saveActiveChapter(chapterId) {
+    const chId = Number(chapterId);
+    const all = { ...this.getAllChapterProgress(), lastActiveChapter: chId };
+    this._cache.chapterProgress = all;
+    localStorage.setItem(STORAGE_KEYS.CHAPTER_PROGRESS, JSON.stringify(all));
+    dbService.setMeta('chapter_progress', all).catch(() => {});
+  }
+
+  getActiveChapter() {
+    const all = this.getAllChapterProgress();
+    return Number(all.lastActiveChapter) || 1;
+  }
+
+  resetChapterProgress(chapterId) {
+    const chId = Number(chapterId);
+    const all = { ...this.getAllChapterProgress() };
+
+    all.chapters[chId] = {
+      lastIndex: 0,
+      answers: {},
+      updatedAt: new Date().toISOString()
+    };
+
+    this._cache.chapterProgress = all;
+    localStorage.setItem(STORAGE_KEYS.CHAPTER_PROGRESS, JSON.stringify(all));
+    dbService.setMeta('chapter_progress', all).catch(() => {});
+    eventBus.emit('chapterProgress:reset', { chapterId: chId });
+  }
+
+  resetAllChaptersProgress() {
+    const def = this._getDefaultChapterProgress();
+    this._cache.chapterProgress = def;
+    localStorage.setItem(STORAGE_KEYS.CHAPTER_PROGRESS, JSON.stringify(def));
+    dbService.setMeta('chapter_progress', def).catch(() => {});
+    eventBus.emit('chapterProgress:resetAll');
+  }
+
+  getChapterStats(chapterId, questions = []) {
+    const chId = Number(chapterId);
+    const prog = this.getChapterProgress(chId);
+    const answers = prog.answers || {};
+
+    const qList = questions && questions.length > 0
+      ? questions
+      : questionService.getByChapter(chId);
+
+    const total = qList.length;
+    let answered = 0;
+    let correct = 0;
+    let wrong = 0;
+
+    qList.forEach(q => {
+      const userAns = answers[q.id];
+      if (userAns !== undefined && userAns !== null) {
+        answered++;
+        if (Number(userAns) === Number(q.correct_option)) {
+          correct++;
+        } else {
+          wrong++;
+        }
+      }
+    });
+
+    const percent = total > 0 ? Math.round((answered / total) * 100) : 0;
+    const remaining = Math.max(0, total - answered);
+
+    return {
+      total,
+      answered,
+      correct,
+      wrong,
+      remaining,
+      percent
+    };
   }
 }
 

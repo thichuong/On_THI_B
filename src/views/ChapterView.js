@@ -7,6 +7,7 @@ import { questionService, CHAPTERS } from '../services/questionService.js';
 import { StorageService } from '../services/storageService.js';
 import { QuestionCard } from '../components/QuestionCard.js';
 import { QuestionPalette } from '../components/QuestionPalette.js';
+import { confirmModal } from '../components/ConfirmModal.js';
 import { $, scrollToQuestion } from '../utils/dom.js';
 
 export class ChapterView extends BaseView {
@@ -17,7 +18,19 @@ export class ChapterView extends BaseView {
 
   mount(container) {
     this.container = container;
-    this.loadChapterQuestions();
+
+    // Restore saved active chapter and progress
+    const activeChapter = StorageService.getActiveChapter();
+    const chapterProg = StorageService.getChapterProgress(activeChapter);
+    this.questions = questionService.getByChapter(activeChapter);
+
+    const safeIndex = Math.min(chapterProg.lastIndex || 0, Math.max(0, this.questions.length - 1));
+    store.setState({
+      selectedChapter: activeChapter,
+      currentPracticeIndex: safeIndex,
+      practiceAnswers: chapterProg.answers || {}
+    });
+
     this.render();
   }
 
@@ -25,7 +38,9 @@ export class ChapterView extends BaseView {
     const state = store.getState();
     this.questions = questionService.getByChapter(state.selectedChapter);
     if (state.currentPracticeIndex >= this.questions.length) {
-      store.setState({ currentPracticeIndex: 0 });
+      const validIndex = Math.max(0, this.questions.length - 1);
+      store.setState({ currentPracticeIndex: validIndex });
+      StorageService.saveChapterLastIndex(state.selectedChapter, validIndex);
     }
   }
 
@@ -35,12 +50,15 @@ export class ChapterView extends BaseView {
     const chapterInfo = questionService.getChapterInfo(state.selectedChapter);
     const savedScrollTop = QuestionPalette.preserveScroll('.exam-sidebar .palette-grid');
 
-    const curIndex = Math.min(state.currentPracticeIndex, this.questions.length - 1);
-    const q = this.questions[curIndex];
-    const userAnswer = state.practiceAnswers[q.id];
     const totalQuestions = this.questions.length;
+    const curIndex = totalQuestions > 0 ? Math.min(state.currentPracticeIndex, totalQuestions - 1) : 0;
+    const q = this.questions[curIndex];
+    const userAnswer = q ? state.practiceAnswers[q.id] : undefined;
 
-    const questionCardHtml = QuestionCard.render({
+    // Calculate current chapter stats
+    const stats = StorageService.getChapterStats(state.selectedChapter, this.questions);
+
+    const questionCardHtml = q ? QuestionCard.render({
       question: q,
       currentIndex: curIndex,
       totalQuestions,
@@ -48,7 +66,7 @@ export class ChapterView extends BaseView {
       isPractice: true,
       showInstantAnswer: state.showInstantAnswer,
       badgePrefix: chapterInfo.shortName
-    });
+    }) : '';
 
     const paletteHtml = QuestionPalette.render({
       questions: this.questions,
@@ -58,18 +76,51 @@ export class ChapterView extends BaseView {
       title: `${chapterInfo.shortName} (${totalQuestions} câu)`
     });
 
+    const correctPercent = totalQuestions > 0 ? (stats.correct / totalQuestions) * 100 : 0;
+    const wrongPercent = totalQuestions > 0 ? (stats.wrong / totalQuestions) * 100 : 0;
+
     this.container.innerHTML = `
       <div class="filter-bar">
         <div style="font-weight: 700; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
           <span>📚 Chọn Chương Ôn Tập:</span>
         </div>
         <select id="chapter-select" class="filter-select" style="min-width: 340px;">
-          ${CHAPTERS.map(ch => `
-            <option value="${ch.id}" ${state.selectedChapter === ch.id ? 'selected' : ''}>
-              ${ch.name}
-            </option>
-          `).join('')}
+          ${CHAPTERS.map(ch => {
+            const chStats = StorageService.getChapterStats(ch.id);
+            const progressBadge = chStats.answered > 0 ? ` • [${chStats.answered}/${chStats.total} câu]` : '';
+            return `
+              <option value="${ch.id}" ${state.selectedChapter === ch.id ? 'selected' : ''}>
+                ${ch.name}${progressBadge}
+              </option>
+            `;
+          }).join('')}
         </select>
+      </div>
+
+      <!-- Chapter Progress Card -->
+      <div class="chapter-progress-card">
+        <div class="chapter-progress-header">
+          <div class="chapter-progress-info">
+            <span>📊 Tiến độ ${chapterInfo.shortName}:</span>
+            <span class="chapter-progress-percent">${stats.answered}/${totalQuestions} câu (${stats.percent}%)</span>
+          </div>
+          <button id="btn-reset-chapter" class="btn-reset-chapter" ${stats.answered === 0 ? 'disabled' : ''} title="Đặt lại toàn bộ câu trả lời của chương này">
+            <span>🔄 Làm lại chương này</span>
+          </button>
+        </div>
+
+        <div class="chapter-progress-bar-track" role="progressbar" aria-valuenow="${stats.percent}" aria-valuemin="0" aria-valuemax="100">
+          <div class="chapter-progress-fill correct" style="width: ${correctPercent}%;" title="${stats.correct} câu đúng"></div>
+          <div class="chapter-progress-fill wrong" style="width: ${wrongPercent}%;" title="${stats.wrong} câu sai"></div>
+        </div>
+
+        <div class="chapter-progress-stats">
+          <span class="chapter-stat-badge correct">🟢 ${stats.correct} câu đúng</span>
+          <span>•</span>
+          <span class="chapter-stat-badge wrong">🔴 ${stats.wrong} câu sai</span>
+          <span>•</span>
+          <span class="chapter-stat-badge remaining">⚪ ${stats.remaining} câu chưa làm</span>
+        </div>
       </div>
 
       <div class="exam-layout" style="margin-top: 1rem;">
@@ -92,32 +143,62 @@ export class ChapterView extends BaseView {
 
     // Chapter select
     $('#chapter-select', this.container)?.addEventListener('change', (e) => {
+      // Save current chapter's index before switching
+      StorageService.saveChapterLastIndex(state.selectedChapter, state.currentPracticeIndex);
+
       const newChapterId = Number(e.target.value);
+      StorageService.saveActiveChapter(newChapterId);
+
+      const newChapterProg = StorageService.getChapterProgress(newChapterId);
+      this.questions = questionService.getByChapter(newChapterId);
+      const safeIndex = Math.min(newChapterProg.lastIndex || 0, Math.max(0, this.questions.length - 1));
+
       store.setState({
         selectedChapter: newChapterId,
-        currentPracticeIndex: 0
+        currentPracticeIndex: safeIndex,
+        practiceAnswers: newChapterProg.answers || {}
       });
-      this.loadChapterQuestions();
+
       this.render();
     });
 
-    // QuestionCard events
-    QuestionCard.bindEvents(this.container, {
-      onSelectOption: (optNum) => this.selectOption(optNum),
-      onPrev: () => this.prevQuestion(),
-      onNext: () => this.nextQuestion(),
-      onToggleBookmark: () => this.toggleBookmark(currentQuestion.id),
-      onResetAnswer: () => this.resetAnswer(currentQuestion.id),
-      onToggleInstantAnswer: (checked) => {
-        store.setState({ showInstantAnswer: checked });
-        this.render();
-      },
-      image: currentQuestion.image
+    // Reset chapter progress
+    $('#btn-reset-chapter', this.container)?.addEventListener('click', () => {
+      const chapterInfo = questionService.getChapterInfo(state.selectedChapter);
+      const stats = StorageService.getChapterStats(state.selectedChapter, this.questions);
+
+      confirmModal.showConfirmation({
+        title: `Làm lại ${chapterInfo.shortName}?`,
+        message: `Toàn bộ ${stats.answered} câu đã làm trong ${chapterInfo.name} sẽ được xóa để bạn ôn tập lại từ đầu. Dữ liệu các chương khác sẽ không bị ảnh hưởng.`,
+        icon: '🔄',
+        confirmText: 'Xác Nhận Làm Lại',
+        cancelText: 'Giữ Lại',
+        onConfirm: () => {
+          this.resetChapter(state.selectedChapter);
+        }
+      });
     });
+
+    // QuestionCard events
+    if (currentQuestion) {
+      QuestionCard.bindEvents(this.container, {
+        onSelectOption: (optNum) => this.selectOption(optNum),
+        onPrev: () => this.prevQuestion(),
+        onNext: () => this.nextQuestion(),
+        onToggleBookmark: () => this.toggleBookmark(currentQuestion.id),
+        onResetAnswer: () => this.resetAnswer(currentQuestion.id),
+        onToggleInstantAnswer: (checked) => {
+          store.setState({ showInstantAnswer: checked });
+          this.render();
+        },
+        image: currentQuestion.image
+      });
+    }
 
     // Palette events
     QuestionPalette.bindEvents(this.container, (idx) => {
       store.setState({ currentPracticeIndex: idx });
+      StorageService.saveChapterLastIndex(state.selectedChapter, idx);
       this.render();
       scrollToQuestion();
     });
@@ -135,6 +216,9 @@ export class ChapterView extends BaseView {
     const newPracticeAnswers = { ...state.practiceAnswers, [q.id]: optNum };
     store.setState({ practiceAnswers: newPracticeAnswers });
 
+    // Persist chapter answer and current question index
+    StorageService.saveChapterAnswer(state.selectedChapter, q.id, optNum, curIndex);
+
     if (optNum !== Number(q.correct_option)) {
       StorageService.recordWrongQuestion(q.id);
     } else {
@@ -150,13 +234,29 @@ export class ChapterView extends BaseView {
     delete newAnswers[questionId];
 
     store.setState({ practiceAnswers: newAnswers });
+
+    // Remove from chapter storage
+    StorageService.removeChapterAnswer(state.selectedChapter, questionId);
+
     this.render();
+  }
+
+  resetChapter(chapterId) {
+    StorageService.resetChapterProgress(chapterId);
+    store.setState({
+      practiceAnswers: {},
+      currentPracticeIndex: 0
+    });
+    this.render();
+    scrollToQuestion();
   }
 
   prevQuestion() {
     const state = store.getState();
     if (state.currentPracticeIndex > 0) {
-      store.setState({ currentPracticeIndex: state.currentPracticeIndex - 1 });
+      const newIndex = state.currentPracticeIndex - 1;
+      store.setState({ currentPracticeIndex: newIndex });
+      StorageService.saveChapterLastIndex(state.selectedChapter, newIndex);
       this.render();
       scrollToQuestion();
     }
@@ -165,7 +265,9 @@ export class ChapterView extends BaseView {
   nextQuestion() {
     const state = store.getState();
     if (state.currentPracticeIndex < this.questions.length - 1) {
-      store.setState({ currentPracticeIndex: state.currentPracticeIndex + 1 });
+      const newIndex = state.currentPracticeIndex + 1;
+      store.setState({ currentPracticeIndex: newIndex });
+      StorageService.saveChapterLastIndex(state.selectedChapter, newIndex);
       this.render();
       scrollToQuestion();
     }

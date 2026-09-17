@@ -212,8 +212,8 @@ PART10_EXPLANATIONS = {
          "Do đó xe tải ĐƯỢC PHÉP ĐI HƯỚNG 2 VÀ HƯỚNG 3.",
 
     523: "Phân tích biển báo cấm tại đầu dải phân cách:\n"
-         "- Tại đầu dải phân cách giữa có cắm biển P.103a 'Cấm xe ô tô' (hình tròn viền đỏ vẽ ô tô con). Biển này cấm tất cả các loại xe ô tô (kể cả xe tải, xe khách theo nguyên tắc 'cấm nhỏ cấm luôn lớn') đi vào phần đường phía sau biển (hướng 2, 3, 4).\n"
-         "- Hướng 1 (rẽ phải trước biển) và hướng 5 (quay đầu xe trước biển) không nằm trong phạm vi cấm của biển.\n"
+         "- Tại đầu dải phân cách giữa có cắm biển P.103a 'Cấm xe ô tô' (hình tròn viền đỏ vẽ ô tô con). Cấm xe ô tô là gồm tất cả xe 4 bánh, 3 bánh (bao gồm cả xe tải, xe khách) đi vào phần đường phía sau biển (hướng 2, 3, 4).\n"
+         "- Hướng 1 (rẽ phải trước biển) và hướng 5 (quay đầu xe trước biển) đều nằm ở phía trước biển cấm nên không thuộc phạm vi tác dụng của biển.\n"
          "Do đó xe ô tô tải ĐƯỢC PHÉP ĐI HƯỚNG 1 VÀ HƯỚNG 5.",
 
     524: "Phân tích biển báo cấm xe tải tại ngã tư:\n"
@@ -290,7 +290,7 @@ PART10_EXPLANATIONS = {
 
     537: "Phân tích biển báo cấm theo từng hướng đi:\n"
          "- Trước ngã tư có cắm biển P.123a 'Cấm rẽ trái' (biển tròn viền đỏ mũi tên rẽ trái gạch chéo), do đó xe tải bị CẤM RẼ VÀO HƯỚNG 2. Biển cấm rẽ trái không cấm quay đầu xe nên hướng 3 vẫn được đi.\n"
-         "- Hướng 4 (đi thẳng) có cắm biển P.108 'Cấm máy kéo'. Theo nguyên tắc 'Cấm xe lớn không cấm xe nhỏ', biển cấm máy kéo không cấm ô tô tải nên xe tải vẫn được đi vào hướng 4.\n"
+         "- Hướng 4 (đi thẳng) có cắm biển P.108 'Cấm máy kéo'. Biển này chỉ áp dụng cấm máy kéo, hoàn toàn không cấm xe ô tô tải nên xe tải vẫn được đi vào hướng 4.\n"
          "- Hướng 1 (rẽ phải) không có biển cấm.\n"
          "Do đó xe tải được phép đi các HƯỚNG 1, 3 VÀ 4.",
 

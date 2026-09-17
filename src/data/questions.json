@@ -4552,7 +4552,7 @@
     ],
     "correct_option": 1,
     "is_critical": false,
-    "explanation": "Biển 1 (P.103a) là biển 'Cấm xe ô tô': Cấm tất cả các loại xe cơ giới từ 4 bánh trở lên đi vào, nhưng KHÔNG CẤM xe mô tô hai bánh, xe gắn máy và các xe ưu tiên theo quy định. Biển 2 cấm xe tải, Biển 3 cấm xe khách."
+    "explanation": "Biển 1 (P.103a 'Cấm xe ô tô'): Cấm xe ô tô là gồm tất cả xe 4 bánh, 3 bánh đi vào (trừ xe mô tô hai bánh, xe gắn máy và các loại xe ưu tiên theo quy định). Biển 2 cấm xe tải, Biển 3 cấm xe khách."
   },
   {
     "id": 302,
@@ -4568,7 +4568,7 @@
     ],
     "correct_option": 4,
     "is_critical": false,
-    "explanation": "Quy tắc 'Cấm nhỏ thì cấm lớn': Biển 1 (Cấm ô tô con) cấm luôn cả ô tô tải. Biển 2 (Cấm ô tô tải) đương nhiên cấm tải. Biển 3 (Cấm xe khách) không cấm tải. Do đó Biển 1 và Biển 2 cấm xe tải."
+    "explanation": "Biển 1 (P.103a 'Cấm xe ô tô'): Cấm xe ô tô là gồm tất cả xe 4 bánh, 3 bánh (bao gồm cả xe tải). Biển 2 (P.107) cấm xe khách và xe tải, trực tiếp cấm ô tô tải. Biển 3 (P.120) chỉ cấm ô tô kéo rơ moóc, không cấm ô tô tải thông thường. Do đó Biển 1 và Biển 2 cấm xe ô tô tải."
   },
   {
     "id": 303,
@@ -4584,7 +4584,7 @@
     ],
     "correct_option": 2,
     "is_critical": false,
-    "explanation": "Thứ tự xe từ nhỏ đến lớn: Ô tô con -> Ô tô tải -> Máy kéo -> Rơ moóc. Cấm nhỏ cấm lớn: Biển 2 (Cấm ô tô tải) cấm luôn máy kéo. Biển 3 (Cấm máy kéo) trực tiếp cấm máy kéo. Do đó Biển 2 và 3 cấm máy kéo."
+    "explanation": "Biển 1 cấm xe mô tô hai bánh. Biển 2 (P.106a 'Cấm xe ô tô tải'): Cấm xe tải thì gồm cả xe đầu kéo, máy kéo, do đó Biển 2 cấm máy kéo. Biển 3 (P.108) trực tiếp cấm máy kéo. Do đó Biển 2 và Biển 3 cấm máy kéo."
   },
   {
     "id": 304,
@@ -4599,7 +4599,7 @@
     ],
     "correct_option": 1,
     "is_critical": false,
-    "explanation": "Biển 1 cấm mô tô 2-3 bánh. Biển 2 cấm ô tô con (đồng thời cấm luôn xe ba bánh cơ giới). Biển 3 cấm xe tải không cấm mô tô 3 bánh. Vì vậy Biển 1 và Biển 2 cấm xe mô tô ba bánh chở hàng."
+    "explanation": "Biển 1 (P.104) cấm mô tô 2 bánh và 3 bánh. Biển 2 (P.103a 'Cấm xe ô tô'): Cấm xe ô tô là gồm tất cả xe 4 bánh, 3 bánh nên cấm cả mô tô 3 bánh. Biển 3 cấm xe tải không cấm mô tô 3 bánh. Vì vậy Biển 1 và Biển 2 cấm xe mô tô ba bánh chở hàng."
   },
   {
     "id": 305,
@@ -4692,7 +4692,7 @@
     ],
     "correct_option": 4,
     "is_critical": false,
-    "explanation": "Biển 2 cấm tất cả các loại xe ô tô vượt (cấm nhỏ cấm lớn, nên cấm luôn cả xe tải). Biển 3 trực tiếp vẽ hình cấm xe tải vượt. Do đó Biển 2 và Biển 3 cấm xe ô tô tải vượt."
+    "explanation": "Biển 1 là biển 'Hết cấm vượt'. Biển 2 (P.125 'Cấm vượt'): Cấm xe ô tô vượt là gồm tất cả xe 4 bánh, 3 bánh vượt nhau (bao gồm cả ô tô tải). Biển 3 (P.126) trực tiếp cấm xe ô tô tải vượt. Do đó Biển 2 và Biển 3 cấm xe ô tô tải vượt."
   },
   {
     "id": 311,
@@ -4721,7 +4721,7 @@
     ],
     "correct_option": 2,
     "is_critical": false,
-    "explanation": "Biển 1 cấm mọi ô tô vượt nên cấm ô tô con. Biển 2 chỉ cấm ô tô tải vượt, theo nguyên tắc 'cấm lớn không cấm nhỏ' thì xe ô tô con hoàn toàn ĐƯỢC PHÉP VƯỢT khi gặp Biển 2."
+    "explanation": "Biển 1 (P.125 'Cấm vượt') cấm tất cả xe ô tô 4 bánh, 3 bánh vượt nhau nên cấm ô tô con vượt. Biển 2 (P.126) chỉ áp dụng cấm riêng xe ô tô tải vượt, không cấm ô tô con. Do đó xe ô tô con hoàn toàn ĐƯỢC PHÉP VƯỢT khi gặp Biển 2."
   },
   {
     "id": 313,
@@ -5146,7 +5146,7 @@
     ],
     "correct_option": 3,
     "is_critical": false,
-    "explanation": "Thứ tự xe: Xe tải -> Máy kéo -> Rơ moóc. Biển 1 cấm máy kéo kéo rơ moóc. Biển 2 cấm ô tô kéo rơ moóc (cấm nhỏ cấm lớn, nên cấm luôn máy kéo kéo rơ moóc). Do đó CẢ HAI BIỂN đều cấm máy kéo kéo theo rơ moóc."
+    "explanation": "Biển 1 (P.120) cấm tất cả các loại xe cơ giới kéo theo rơ moóc (bao gồm cả máy kéo kéo rơ moóc). Biển 2 (P.108) cấm tất cả các loại máy kéo đi vào (dù có kéo hay không kéo rơ moóc). Do đó CẢ HAI BIỂN đều cấm máy kéo kéo theo rơ moóc."
   },
   {
     "id": 341,
@@ -5160,7 +5160,7 @@
     ],
     "correct_option": 1,
     "is_critical": false,
-    "explanation": "Biển số 1 cấm xe ô tô kéo rơ moóc (xe lớn). Theo nguyên tắc 'cấm lớn không cấm nhỏ', biển này KHÔNG CẤM ô tô tải thông thường không kéo moóc. Vì vậy xe ô tô tải được phép đi vào."
+    "explanation": "Biển số 1 (P.120 'Cấm ô tô kéo rơ moóc') chỉ có hiệu lực cấm các phương tiện có kéo theo rơ moóc, hoàn toàn KHÔNG CẤM ô tô tải thông thường không kéo moóc. Vì vậy xe ô tô tải ĐƯỢC PHÉP ĐI VÀO."
   },
   {
     "id": 342,
@@ -5192,7 +5192,7 @@
     ],
     "correct_option": 3,
     "is_critical": false,
-    "explanation": "Biển 2 cấm xe tải (cấm nhỏ cấm lớn nên cấm luôn máy kéo). Biển 3 cấm trực tiếp máy kéo. Do đó Biển 2 và Biển 3 cấm máy kéo."
+    "explanation": "Biển 1 chỉ cấm xe kéo theo rơ moóc. Biển 2 (P.108) trực tiếp cấm máy kéo. Biển 3 (P.106a 'Cấm xe ô tô tải'): Cấm xe tải thì gồm cả xe đầu kéo, máy kéo, do đó Biển 3 cũng cấm máy kéo. Do đó Biển 2 và Biển 3 cấm máy kéo."
   },
   {
     "id": 344,
@@ -7899,7 +7899,7 @@
     ],
     "correct_option": 3,
     "is_critical": false,
-    "explanation": "Phân tích biển báo cấm tại đầu dải phân cách:\n- Tại đầu dải phân cách giữa có cắm biển P.103a 'Cấm xe ô tô' (hình tròn viền đỏ vẽ ô tô con). Biển này cấm tất cả các loại xe ô tô (kể cả xe tải, xe khách theo nguyên tắc 'cấm nhỏ cấm luôn lớn') đi vào phần đường phía sau biển (hướng 2, 3, 4).\n- Hướng 1 (rẽ phải trước biển) và hướng 5 (quay đầu xe trước biển) không nằm trong phạm vi cấm của biển.\nDo đó xe ô tô tải ĐƯỢC PHÉP ĐI HƯỚNG 1 VÀ HƯỚNG 5."
+    "explanation": "Phân tích biển báo cấm tại đầu dải phân cách:\n- Tại đầu dải phân cách giữa có cắm biển P.103a 'Cấm xe ô tô' (hình tròn viền đỏ vẽ ô tô con). Cấm xe ô tô là gồm tất cả xe 4 bánh, 3 bánh (bao gồm cả xe tải, xe khách) đi vào phần đường phía sau biển (hướng 2, 3, 4).\n- Hướng 1 (rẽ phải trước biển) và hướng 5 (quay đầu xe trước biển) đều nằm ở phía trước biển cấm nên không thuộc phạm vi tác dụng của biển.\nDo đó xe ô tô tải ĐƯỢC PHÉP ĐI HƯỚNG 1 VÀ HƯỚNG 5."
   },
   {
     "id": 524,
@@ -8111,7 +8111,7 @@
     ],
     "correct_option": 4,
     "is_critical": false,
-    "explanation": "Phân tích biển báo cấm theo từng hướng đi:\n- Trước ngã tư có cắm biển P.123a 'Cấm rẽ trái' (biển tròn viền đỏ mũi tên rẽ trái gạch chéo), do đó xe tải bị CẤM RẼ VÀO HƯỚNG 2. Biển cấm rẽ trái không cấm quay đầu xe nên hướng 3 vẫn được đi.\n- Hướng 4 (đi thẳng) có cắm biển P.108 'Cấm máy kéo'. Theo nguyên tắc 'Cấm xe lớn không cấm xe nhỏ', biển cấm máy kéo không cấm ô tô tải nên xe tải vẫn được đi vào hướng 4.\n- Hướng 1 (rẽ phải) không có biển cấm.\nDo đó xe tải được phép đi các HƯỚNG 1, 3 VÀ 4."
+    "explanation": "Phân tích biển báo cấm theo từng hướng đi:\n- Trước ngã tư có cắm biển P.123a 'Cấm rẽ trái' (biển tròn viền đỏ mũi tên rẽ trái gạch chéo), do đó xe tải bị CẤM RẼ VÀO HƯỚNG 2. Biển cấm rẽ trái không cấm quay đầu xe nên hướng 3 vẫn được đi.\n- Hướng 4 (đi thẳng) có cắm biển P.108 'Cấm máy kéo'. Biển này chỉ áp dụng cấm máy kéo, hoàn toàn không cấm xe ô tô tải nên xe tải vẫn được đi vào hướng 4.\n- Hướng 1 (rẽ phải) không có biển cấm.\nDo đó xe tải được phép đi các HƯỚNG 1, 3 VÀ 4."
   },
   {
     "id": 538,

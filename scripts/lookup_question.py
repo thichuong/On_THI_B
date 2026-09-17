@@ -79,7 +79,8 @@ def main():
         exp = q.get("explanation", "").strip()
         print(f"\n💡 Lời giải thích hiện tại:")
         if exp:
-            print(f"   {exp}")
+            indented_exp = "\n   ".join(exp.splitlines())
+            print(f"   {indented_exp}")
         else:
             print("   (Chưa có giải thích)")
         print("=" * 60 + "\n")

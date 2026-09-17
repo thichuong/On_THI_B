@@ -154,7 +154,10 @@ export class QuestionCard {
               <span>💡 ${isPractice ? 'Đáp án chuẩn & Lời khuyên chi tiết' : (isInstantFeedback ? 'Kết quả & Giải thích chi tiết' : 'Giải thích chi tiết & Đáp án đúng')}</span>
             </div>
             <div class="explanation-content">
-              <strong>Đáp án đúng: Ý số ${question.correct_option}.</strong> ${question.explanation || (question.is_critical ? 'Đây là câu hỏi mất an toàn giao thông nghiêm trọng (câu điểm liệt), người lái xe bắt buộc phải nắm rõ và chấp hành nghiêm túc.' : 'Căn cứ theo Luật Trật tự, an toàn giao thông đường bộ và Quy chuẩn Báo hiệu đường bộ 2025.')}
+              <div class="explanation-correct-answer">
+                <strong>Đáp án đúng: Ý số ${question.correct_option}.</strong>
+              </div>
+              <div class="explanation-text">${escapeHtml((question.explanation || (question.is_critical ? 'Đây là câu hỏi mất an toàn giao thông nghiêm trọng (câu điểm liệt), người lái xe bắt buộc phải nắm rõ và chấp hành nghiêm túc.' : 'Căn cứ theo Luật Trật tự, an toàn giao thông đường bộ và Quy chuẩn Báo hiệu đường bộ 2025.')).trim())}</div>
             </div>
           </div>
         ` : ((isPractice || isInstantFeedback) ? `

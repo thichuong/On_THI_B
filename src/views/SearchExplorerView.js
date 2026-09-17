@@ -93,7 +93,10 @@ export class SearchExplorerView extends BaseView {
                   <span>💡 Giải thích chi tiết & Đáp án đúng</span>
                 </div>
                 <div class="explanation-content">
-                  <strong>Đáp án đúng: Ý số ${q.correct_option}.</strong> ${escapeHtml(q.explanation)}
+                  <div class="explanation-correct-answer">
+                    <strong>Đáp án đúng: Ý số ${q.correct_option}.</strong>
+                  </div>
+                  <div class="explanation-text">${escapeHtml(q.explanation.trim())}</div>
                 </div>
               </div>
             ` : ''}

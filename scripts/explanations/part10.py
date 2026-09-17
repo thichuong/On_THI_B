@@ -61,10 +61,14 @@ PART10_EXPLANATIONS = {
     495: "Quyền ưu tiên của các phương tiện tham gia giao thông:\n"
          "Xe cứu thương đang phát tín hiệu đi làm nhiệm vụ cấp cứu là xe ưu tiên theo quy định của Luật Giao thông đường bộ. Các phương tiện giao thông thông thường (xe mô tô) phải chủ động giảm tốc độ, nhường đường cho xe ưu tiên đi trước.",
 
-    496: "Xét biển báo hiệu và hướng đi:\n"
-         "- Xe tải gặp biển W.207 'Giao nhau với đường không ưu tiên' (đang đi trên đường ưu tiên).\n"
-         "- Xe con cùng trục đường ưu tiên với xe tải nên xe tải và xe con được quyền đi trước.\n"
-         "- Xe khách gặp biển W.208 'Giao nhau với đường ưu tiên' (đang trên đường nhánh không ưu tiên) và rẽ trái nên bắt buộc PHẢI NHƯỜNG ĐƯỜNG ĐI CUỐI CÙNG qua nơi giao nhau.",
+    496: "Phân tích quyền ưu tiên theo biển báo và hướng đi tại nơi giao nhau:\n"
+         "1. Xét quyền ưu tiên theo biển báo:\n"
+         "- Trục đường của xe con có cắm biển W.207 'Giao nhau với đường không ưu tiên' (biển tam giác đỉnh hướng lên trên), biểu thị xe con đang đi trên ĐƯỜNG ƯU TIÊN -> Xe con được quyền đi trước.\n"
+         "- Trục đường của xe tải và xe khách có cắm biển W.208 'Giao nhau với đường ưu tiên' (biển tam giác ngược đỉnh chúc xuống), biểu thị cả hai xe đều đang ở trên ĐƯỜNG KHÔNG ƯU TIÊN.\n"
+         "2. Xét hướng di chuyển và xung đột dòng xe:\n"
+         "- Xe tải rẽ phải ôm cua vào làn bên phải, hoàn toàn không giao cắt hay vướng hướng đi của xe con, do đó trên thực tế xe con và xe tải có thể di chuyển cùng lúc.\n"
+         "- Xe khách rẽ trái cắt ngang giao lộ, vừa phải nhường đường cho xe trên đường ưu tiên (xe con), vừa phải nhường cho xe rẽ phải (xe tải).\n"
+         "Do đó XE KHÁCH là xe phải nhường đường đi cuối cùng qua nơi giao nhau.",
 
     497: "Phân tích biển báo và quy tắc hướng rẽ:\n"
          "- Cả xe con và xe tải đều gặp biển tam giác ngược W.208 'Giao nhau với đường ưu tiên' kèm biển phụ S.506b thể hiện đường ưu tiên đi theo hướng cong sang nhánh khác. Cả hai xe đều đang ở trên đường nhánh không ưu tiên.\n"

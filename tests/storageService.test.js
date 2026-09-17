@@ -59,13 +59,13 @@ test('StorageService - Exam Cycle tracking and status', () => {
   assert.equal(status.seenCount, 0);
   assert.equal(status.remainingCount, 600);
 
-  // Add 50 questions
-  const first50 = Array.from({ length: 50 }, (_, i) => i + 1);
-  StorageService.addSeenExamQuestionIds('standard', first50);
+  // Add 30 questions
+  const first30 = Array.from({ length: 30 }, (_, i) => i + 1);
+  StorageService.addSeenExamQuestionIds('standard', first30);
 
   status = StorageService.getCycleStatus('standard', 600);
-  assert.equal(status.seenCount, 50);
-  assert.equal(status.remainingCount, 550);
+  assert.equal(status.seenCount, 30);
+  assert.equal(status.remainingCount, 570);
 
   // Reset cycle
   StorageService.resetExamCycle('standard');

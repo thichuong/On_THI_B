@@ -34,11 +34,11 @@ node --test tests/storageService.test.js
 ## 📋 Cấu Trúc Các Bài Test (Test Cases)
 
 ### 1. `tests/examEngine.test.js` (8 Test Cases)
-- **Standard Exam Generation**: Kiểm tra đề thi chuẩn tạo đủ đúng 50 câu, có 1-2 câu điểm liệt, không trùng lặp câu nào trong cùng 1 đề.
+- **Standard Exam Generation**: Kiểm tra đề thi chuẩn tạo đủ đúng 30 câu, có 1-2 câu điểm liệt, không trùng lặp câu nào trong cùng 1 đề.
 - **Quick Exam Generation**: Kiểm tra đề thi nhanh tạo đủ đúng 20 câu, có tối thiểu 1 câu điểm liệt, không trùng lặp.
-- **Unseen Questions Cycle for Standard Exam**: Mô phỏng 13 đề thi chuẩn liên tiếp ($12 \times 50 = 600$ câu):
-  - Xác nhận đề 1 đến đề 12 lấy 100% câu chưa làm, không trùng lặp bất kỳ câu nào giữa các đề.
-  - Xác nhận đề 13 phát hiện hết câu ($0 < 50$), tự động kích hoạt cờ `isCycleReset: true` và gọi callback `onCycleReset` để bắt đầu chu kỳ mới.
+- **Unseen Questions Cycle for Standard Exam**: Mô phỏng 21 đề thi chuẩn liên tiếp ($20 \times 30 = 600$ câu):
+  - Xác nhận đề 1 đến đề 20 lấy 100% câu chưa làm, không trùng lặp bất kỳ câu nào giữa các đề.
+  - Xác nhận đề 21 phát hiện hết câu ($0 < 30$), tự động kích hoạt cờ `isCycleReset: true` và gọi callback `onCycleReset` để bắt đầu chu kỳ mới.
 - **Unseen Questions Cycle for Quick Exam**: Mô phỏng 31 đề thi nhanh liên tiếp ($30 \times 20 = 600$ câu):
   - Xác nhận 30 đề đầu không trùng lặp câu nào.
   - Xác nhận đề 31 tự động reset chu kỳ.

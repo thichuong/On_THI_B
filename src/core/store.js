@@ -7,7 +7,7 @@ class Store {
   constructor() {
     this.state = {
       currentMode: 'exam',
-      examType: 'standard', // 'standard' (50 câu) | 'quick' (20 câu)
+      examType: 'standard', // 'standard' (30 câu) | 'quick' (20 câu)
 
       // Exam state
       isExamStarted: false,

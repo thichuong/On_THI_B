@@ -3,15 +3,15 @@ import assert from 'node:assert/strict';
 import { ExamEngine, EXAM_PRESETS } from '../src/services/examEngine.js';
 import questionsData from '../src/data/questions.json' with { type: 'json' };
 
-test('ExamEngine - Standard Exam Generation (50 questions)', () => {
+test('ExamEngine - Standard Exam Generation (30 questions)', () => {
   const questions = ExamEngine.generateExam(questionsData, 'standard');
-  assert.equal(questions.length, 50, 'Standard exam must generate exactly 50 questions');
+  assert.equal(questions.length, 30, 'Standard exam must generate exactly 30 questions');
   
   const criticalCount = questions.filter(q => q.is_critical).length;
   assert.ok(criticalCount >= 1 && criticalCount <= 2, 'Critical questions must be between 1 and 2');
 
   const ids = new Set(questions.map(q => q.id));
-  assert.equal(ids.size, 50, 'All 50 questions in an exam must be unique');
+  assert.equal(ids.size, 30, 'All 30 questions in an exam must be unique');
 });
 
 test('ExamEngine - Quick Exam Generation (20 questions)', () => {
@@ -29,8 +29,8 @@ test('ExamEngine - Unseen Questions Cycle for Standard Exam (Auto-Reset on Exhau
   let seenStandard = new Set();
   let resetsCount = 0;
 
-  // Run 13 consecutive exams (12 * 50 = 600 questions)
-  for (let examIndex = 1; examIndex <= 13; examIndex++) {
+  // Run 21 consecutive exams (20 * 30 = 600 questions)
+  for (let examIndex = 1; examIndex <= 21; examIndex++) {
     const result = ExamEngine.generateExam(questionsData, 'standard', {
       seenQuestionIds: seenStandard,
       onCycleReset: () => {
@@ -39,9 +39,9 @@ test('ExamEngine - Unseen Questions Cycle for Standard Exam (Auto-Reset on Exhau
       }
     });
 
-    assert.equal(result.length, 50, `Exam ${examIndex} must have 50 questions`);
+    assert.equal(result.length, 30, `Exam ${examIndex} must have 30 questions`);
 
-    if (examIndex <= 12) {
+    if (examIndex <= 20) {
       assert.equal(result.isCycleReset, false, `Exam ${examIndex} should not reset cycle yet`);
       // Verify no questions were already in seen set
       for (const q of result) {
@@ -49,8 +49,8 @@ test('ExamEngine - Unseen Questions Cycle for Standard Exam (Auto-Reset on Exhau
       }
       result.newlySelectedIds.forEach(id => seenStandard.add(id));
     } else {
-      // Exam 13: 600 questions were exhausted -> cycle must reset
-      assert.equal(result.isCycleReset, true, 'Exam 13 must trigger cycle reset');
+      // Exam 21: 600 questions were exhausted -> cycle must reset
+      assert.equal(result.isCycleReset, true, 'Exam 21 must trigger cycle reset');
       assert.ok(resetsCount >= 1, 'onCycleReset callback must be invoked');
     }
   }

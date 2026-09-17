@@ -117,7 +117,7 @@ export class PracticeView extends BaseView {
         <h2>Chưa có câu hỏi nào trong danh sách này</h2>
         <p>Hãy làm bài thi hoặc ôn tập các chương để lưu câu hỏi vào đây nhé!</p>
         <button class="btn-nav btn-primary" id="btn-back-to-exam" style="margin-top: 1rem;">
-          📝 Làm Đề Thi Thử 50 Câu
+          📝 Làm Đề Thi Thử 30 Câu
         </button>
       </div>
     `;

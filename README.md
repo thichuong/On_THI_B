@@ -6,10 +6,10 @@
 
 ## 🌟 Tính Năng Nổi Bật
 
-- 📝 **Thi Thử Sát Hạch Chuẩn (50 câu / 33 phút)**:
+- 📝 **Thi Thử Sát Hạch Chuẩn (30 câu / 20 phút)**:
   - Tự động sinh đề ngẫu nhiên chuẩn tỉ lệ 6 chương và bắt buộc có 1-2 câu điểm liệt.
-  - Bấm giờ đếm ngược thời gian thực (33 phút / 1980 giây).
-  - Chấm điểm tự động chuẩn xác: Đạt từ 45/50 điểm trở lên và không sai câu điểm liệt.
+  - Bấm giờ đếm ngược thời gian thực (20 phút / 1200 giây).
+  - Chấm điểm tự động chuẩn xác: Đạt từ 27/30 điểm trở lên và không sai câu điểm liệt.
   - Chế độ xem lại chi tiết từng câu kèm lời giải thích và đáp án chuẩn.
 
 - ⚡ **Chế Độ Thi Nhanh (20 câu / 10 phút)**:

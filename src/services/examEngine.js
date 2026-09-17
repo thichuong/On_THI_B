@@ -7,21 +7,21 @@
 export const EXAM_PRESETS = {
   standard: {
     key: 'standard',
-    name: 'Thi Thử Chuẩn (50 Câu / 33 Phút)',
-    shortName: 'Thi Thử Chuẩn (50 Câu)',
-    totalQuestions: 50,
-    durationMinutes: 33,
-    durationSeconds: 33 * 60,
-    passThreshold: 45,
+    name: 'Thi Thử Chuẩn (30 Câu / 20 Phút)',
+    shortName: 'Thi Thử Chuẩn (30 Câu)',
+    totalQuestions: 30,
+    durationMinutes: 20,
+    durationSeconds: 20 * 60,
+    passThreshold: 27,
     minCritical: 1,
     maxCritical: 2,
     chapterQuotas: {
-      1: 14, // Quy định chung & quy tắc
-      2: 2,  // Văn hóa & đạo đức
-      3: 4,  // Kỹ thuật lái xe
-      4: 2,  // Cấu tạo & sửa chữa
-      5: 16, // Biển báo
-      6: 11  // Sa hình
+      1: 8,  // Quy định chung & quy tắc
+      2: 1,  // Văn hóa & đạo đức
+      3: 2,  // Kỹ thuật lái xe
+      4: 1,  // Cấu tạo & sửa chữa
+      5: 10, // Biển báo
+      6: 8   // Sa hình
     }
   },
   quick: {
@@ -203,9 +203,9 @@ export class ExamEngine {
   }
 
   /**
-   * Generates a 50-question mock test (33 minutes standard).
+   * Generates a 30-question mock test (20 minutes standard).
    */
-  static generate50QuestionExam(allQuestions, options = {}) {
+  static generate30QuestionExam(allQuestions, options = {}) {
     return this.generateExam(allQuestions, 'standard', options);
   }
 
@@ -219,7 +219,7 @@ export class ExamEngine {
   /**
    * Backward compatibility alias
    */
-  static generate30QuestionExam(allQuestions, options = {}) {
+  static generate50QuestionExam(allQuestions, options = {}) {
     return this.generateExam(allQuestions, 'standard', options);
   }
 
@@ -233,10 +233,10 @@ export class ExamEngine {
    */
   static gradeExam(examQuestions, userAnswers, passThreshold = null) {
     const total = examQuestions.length;
-    // Default pass thresholds: 45/50 for 50-question, 18/20 for 20-question, or 90%
+    // Default pass thresholds: 27/30 for 30-question, 45/50 for 50-question, 18/20 for 20-question, or 90%
     const resolvedThreshold = passThreshold !== null
       ? passThreshold
-      : (total === 50 ? 45 : (total === 20 ? 18 : Math.ceil(total * 0.9)));
+      : (total === 30 ? 27 : (total === 50 ? 45 : (total === 20 ? 18 : Math.ceil(total * 0.9))));
 
     let correctCount = 0;
     let wrongCount = 0;

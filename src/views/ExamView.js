@@ -164,7 +164,7 @@ export class ExamView extends BaseView {
       examBadgeText = '⚡ THI NHANH - KẾT QUẢ TRỰC TIẾP (20 CÂU)';
       examBadgeStyle = 'background: rgba(245, 158, 11, 0.2); color: #f59e0b; border-color: rgba(245, 158, 11, 0.4);';
     } else {
-      examBadgeText = '📝 THI THỬ CHUẨN (50 CÂU / 33 PHÚT)';
+      examBadgeText = '📝 THI THỬ CHUẨN (30 CÂU / 20 PHÚT)';
       examBadgeStyle = 'background: rgba(99, 102, 241, 0.2); color: #818cf8; border-color: rgba(99, 102, 241, 0.4);';
     }
 
@@ -282,7 +282,7 @@ export class ExamView extends BaseView {
               ${
                 isWrongRedoMode
                   ? 'CHẾ ĐỘ LÀM LẠI CÂU SAI - TỰ ĐỘNG XÓA KHI LÀM ĐÚNG'
-                  : (isQuick ? 'CHẾ ĐỘ THI NHANH (20 CÂU) - PHẢN HỒI TỨC THÌ' : 'CHẾ ĐỘ THI THỬ CHUẨN (50 CÂU)')
+                  : (isQuick ? 'CHẾ ĐỘ THI NHANH (20 CÂU) - PHẢN HỒI TỨC THÌ' : 'CHẾ ĐỘ THI THỬ CHUẨN (30 CÂU)')
               }
             </div>
             <h2 class="exam-start-title">
@@ -298,7 +298,7 @@ export class ExamView extends BaseView {
                   ? 'Hệ thống sẽ lấy tối đa 20 câu hỏi bạn đã từng làm sai để bạn rèn luyện lại. <strong>Đặc biệt: Khi bạn trả lời đúng câu sai nào, hệ thống sẽ tự động xóa câu đó khỏi danh sách câu sai!</strong>'
                   : (isQuick
                     ? 'Bài thi nhanh 20 câu trong 10 phút: <strong>Ưu tiên các câu chưa làm trong chu kỳ</strong>. Kết quả đúng/sai và giải thích hiển thị trực tiếp ngay khi chọn đáp án.'
-                    : 'Đề thi 50 câu (33 phút) được tạo theo cấu trúc chuẩn Cục CSGT 2025. <strong>Ưu tiên các câu chưa làm trong chu kỳ</strong> và chỉ reset khi không đủ câu.')
+                    : 'Đề thi 30 câu (20 phút) được tạo theo cấu trúc chuẩn Cục CSGT 2025. <strong>Ưu tiên các câu chưa làm trong chu kỳ</strong> và chỉ reset khi không đủ câu.')
               }
             </p>
           </div>
@@ -385,7 +385,7 @@ export class ExamView extends BaseView {
               ` : `
                 <li>Đồng hồ đếm ngược sẽ <strong>bắt đầu tính thời gian</strong> ngay khi bạn bấm nút "Bắt Đầu Làm Bài".</li>
                 <li>Làm sai bất kỳ <strong>câu hỏi điểm liệt</strong> nào, bài thi sẽ bị tính là <strong>Không Đạt</strong> ngay lập tức.</li>
-                <li>Hệ thống <strong>ưu tiên trộn các câu chưa làm</strong> cho tới khi không đủ 50 câu mới reset chu kỳ.</li>
+                <li>Hệ thống <strong>ưu tiên trộn các câu chưa làm</strong> cho tới khi không đủ 30 câu mới reset chu kỳ.</li>
               `)}
               <li>Phím <kbd class="kbd">1</kbd> - <kbd class="kbd">4</kbd> để chọn đáp án, phím <kbd class="kbd">Enter ↵</kbd> hoặc <kbd class="kbd">←</kbd> <kbd class="kbd">→</kbd> để chuyển câu hỏi.</li>
             </ul>

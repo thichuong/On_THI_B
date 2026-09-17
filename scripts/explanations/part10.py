@@ -282,10 +282,10 @@ PART10_EXPLANATIONS = {
          "- Các hướng còn lại: Hướng 1 (rẽ phải), Hướng 2 (rẽ trái), Hướng 3 (quay đầu xe) không có biển cấm đối với xe tải.\n"
          "Do đó xe tải được phép đi các hướng TRỪ HƯỚNG 4.",
 
-    536: "Áp dụng thứ tự ưu tiên sa hình:\n"
-         "1. 'Nhì ưu': Xe công an đi làm nhiệm vụ khẩn cấp được quyền đi đầu tiên.\n"
-         "2. 'Tam đường': Xe con nằm trên đường có cắm biển W.207 'Giao nhau với đường không ưu tiên' (đang trên đường ưu tiên) và đi thẳng nên được đi thứ 2.\n"
-         "3. 'Tứ hướng': Xe tải và xe khách cùng ở đường không ưu tiên (gặp biển tam giác ngược W.208), xe tải đi thẳng đi thứ 3, xe khách rẽ trái đi cuối cùng.\n"
+    536: "Phân tích thứ tự ưu tiên sa hình tại nơi giao nhau:\n"
+         "1. Xe ưu tiên: Xe công an đi làm nhiệm vụ khẩn cấp có quyền ưu tiên cao nhất nên được ĐI ĐẦU TIÊN (thứ 1).\n"
+         "2. Xe trên đường ưu tiên: Cả xe tải và xe con đều nằm trên đường ưu tiên (gặp biển W.207 'Giao nhau với đường không ưu tiên') và cùng rẽ trái. Áp dụng quy tắc 'Bên phải không vướng': do xe công an đã đi nên bên phải xe con lúc này đã trống -> Xe con ĐƯỢC ĐI THỨ 2; tiếp đến là Xe tải rẽ trái ĐI THỨ 3.\n"
+         "3. Xe trên đường không ưu tiên: Xe khách nằm trên đường không ưu tiên (gặp biển tam giác ngược W.208) nên phải nhường đường và ĐI SAU CÙNG (thứ 4).\n"
          "Thứ tự đúng: Xe công an -> Xe con -> Xe tải -> Xe khách.",
 
     537: "Phân tích biển báo cấm theo từng hướng đi:\n"

@@ -7,9 +7,9 @@ Chương 6: Giải thế sa hình và kỹ năng xử lý tình huống giao th�
 
 PART11_EXPLANATIONS = {
     541: "Quy tắc nhường đường khi tránh nhau trên đường dốc hẹp:\n"
-         "- Hình ảnh thể hiện đoạn đường đèo dốc hẹp, bên phải xe A có cắm biển W.219 'Dốc xuống nguy hiểm 10%'.\n"
-         "- Luật Giao thông đường bộ quy định: Khi tránh nhau trên đường dốc hẹp, 'Xe đang xuống dốc phải nhường đường cho xe đang lên dốc'.\n"
-         "- Trong hình, xe A đang xuống dốc còn xe B đang lên dốc.\n"
+         "- Phía trước bên phải xe B có cắm biển báo W.220 'Dốc lên nguy hiểm' (vạch dốc hướng lên khi nhìn từ trái sang phải), nghĩa là xe B đang đi lên dốc.\n"
+         "- Xe A đi theo chiều ngược lại nên xe A đang đi xuống dốc.\n"
+         "- Quy tắc giao thông đường bộ quy định: Khi tránh nhau trên đường dốc hẹp, xe đang xuống dốc phải nhường đường cho xe đang lên dốc.\n"
          "Do đó XE A PHẢI NHƯỜNG ĐƯỜNG cho xe B.",
 
     542: "Quy định cấm quay đầu xe tại nơi có vạch người đi bộ:\n"
@@ -41,12 +41,11 @@ PART11_EXPLANATIONS = {
          "- Xe con (A) đang đi thẳng trên làn đường thông suốt của mình.\n"
          "Do đó XE CON (B) PHẢI NHƯỜNG ĐƯỜNG cho xe con (A).",
 
-    547: "Quy tắc hướng đi ưu tiên tại nơi đường giao nhau cùng cấp:\n"
-         "- Ngã tư không có biển báo ưu tiên, các xe cùng lúc tới giao lộ. Áp dụng thứ tự ưu tiên hướng đi: 'Phải > Thẳng > Trái':\n"
-         "  1. Xe tải rẽ phải được đi trước.\n"
-         "  2. Xe buýt đi thẳng được đi tiếp theo.\n"
-         "  3. Xe của bạn rẽ trái đi cuối cùng.\n"
-         "Do đó bạn phải NHƯỜNG ĐƯỜNG CHO CẢ XE BUÝT VÀ XE TẢI.",
+    547: "Quy tắc nhường đường tại nơi giao nhau có đèn tín hiệu:\n"
+         "- Dù xe của bạn đang có đèn xanh nhưng bạn đang chuẩn bị rẽ trái qua giao lộ.\n"
+         "- Xe tải đã cán vạch, đi vào ngã rẽ (đã chớm vào nơi giao nhau trước) nên theo nguyên tắc 'Nhất chớm', xe tải được quyền ưu tiên đi tiếp để thoát khỏi giao lộ.\n"
+         "- Xe buýt đi thẳng từ hướng đối diện, được quyền ưu tiên đi trước xe rẽ trái theo quy tắc hướng đi (Đi thẳng > Rẽ trái).\n"
+         "Do đó, dù đang là đèn xanh thì bạn vẫn phải NHƯỜNG ĐƯỜNG CHO CẢ XE BUÝT VÀ XE TẢI.",
 
     548: "Đối chiếu biển phân làn trên giá long môn với vị trí thực tế của từng xe:\n"
          "- Làn 1 (bên trái): Làn dành cho ô tô con -> Xe con (A) đi đúng.\n"
@@ -66,10 +65,10 @@ PART11_EXPLANATIONS = {
          "- Hướng A: Xe tiến qua vạch người đi bộ vào trong ngã tư an toàn rồi mới vòng đầu xe -> Đúng luật.\n"
          "Do đó người lái xe CHỈ ĐƯỢC QUAY ĐẦU THEO HƯỚNG A.",
 
-    551: "Phân tích biển báo ưu tiên và hướng đi của các xe:\n"
-         "- Phía trước xe của bạn có cắm biển W.207 'Giao nhau với đường không ưu tiên' (đang trên đường ưu tiên) và bạn rẽ phải.\n"
-         "- Xe con ở trục đường đối diện cũng là đường ưu tiên và rẽ phải. Hai xe rẽ vào hai nhánh riêng biệt không giao cắt, xung đột hướng đi nên ĐI ĐỒNG THỜI.\n"
-         "- Xe tải ở đường nhánh cắt ngang (đường không ưu tiên) rẽ trái đi sau cùng.\n"
+    551: "Phân tích biển báo ưu tiên và hướng di chuyển của các xe:\n"
+         "- Xe của bạn: Phía trước có cắm biển W.207a 'Giao nhau với đường không ưu tiên' (đang đi trên đường ưu tiên) và xe đi thẳng nên được quyền đi trước.\n"
+         "- Xe con: Ở đường không ưu tiên nhưng rẽ phải, hướng rẽ không giao cắt hay xung đột với xe của bạn nên có thể đi cùng lúc với xe của bạn.\n"
+         "- Xe tải: Ở đường không ưu tiên và rẽ trái (cắt qua luồng ưu tiên) nên phải nhường đường và đi sau cùng.\n"
          "Thứ tự đúng: Xe của bạn và xe con, xe tải.",
 
     552: "Quy tắc vượt xe an toàn theo Luật Giao thông đường bộ:\n"
@@ -84,10 +83,9 @@ PART11_EXPLANATIONS = {
          "- Làn xe tải và xe con đang có tín hiệu ĐÈN ĐỎ -> Bắt buộc phải dừng lại trước vạch dừng.\n"
          "Đáp án đúng: Xe con, xe tải.",
 
-    554: "Đối chiếu biển phân làn trên giá long môn với các xe trên đường:\n"
-         "- Làn 1: Dành cho xe khách và xe con -> Xe con (A) và Xe buýt (G) đi đúng.\n"
-         "- Làn 2: Dành cho xe con và xe tải -> Xe con (C) đi đúng; Xe con (B) đi sai làn.\n"
-         "- Làn 3: Dành cho xe con và mô tô -> Xe con (E) đi đúng; Xe tải (D) đi vào làn mô tô là sai.\n"
+    554: "Quan sát vị trí xe chạy so với các vạch kẻ đường:\n"
+         "- Xe con (B) và Xe tải (D) vi phạm vì chạy cán/đè lên vạch kẻ đường (xe B chạy đè vạch đôi màu vàng ở tim đường, xe D chạy đè vạch liền màu trắng).\n"
+         "- Các xe còn lại gồm Xe con (A), Xe con (C), Xe con (E) và Xe buýt (G) đều đi đúng trong phần làn đường quy định, không đè vạch.\n"
          "Do đó các xe chấp hành đúng quy tắc giao thông là: Xe con (A), xe con (C), xe con (E), xe buýt (G).",
 
     555: "Quy định cấm vượt xe tại nơi đường giao nhau:\n"

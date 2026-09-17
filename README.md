@@ -148,7 +148,20 @@ python3 extract_questions.py
 
 ---
 
-## 📄 Bản Quyền & Giấy Phép
+## 📄 Giấy Phép & Bản Quyền (License)
 
-Nội dung câu hỏi và hình ảnh sát hạch thuộc bản quyền tài liệu của Cục Cảnh sát giao thông & Bộ Giao thông vận tải. Ứng dụng được xây dựng phục vụ mục đích học tập và ôn thi sát hạch giấy phép lái xe.
+Dự án này được phân phối dưới cơ chế **Giấy phép kép (Dual-Licensed)**: Bạn có thể tùy chọn sử dụng theo điều khoản của **[MIT License](LICENSE-MIT)** hoặc **[Apache License 2.0](LICENSE-APACHE)**.
+
+### 📌 Quy định khi Clone / Sử dụng lại mã nguồn (Attribution Requirement)
+
+Nếu bạn sao chép (clone), fork hoặc trích dẫn mã nguồn dự án này để phát triển tiếp hoặc tích hợp vào sản phẩm khác (cả phi thương mại lẫn thương mại), bạn **BẮT BUỘC** phải:
+1. **Ghi rõ tác giả:** Giữ nguyên thông báo bản quyền: `Copyright (c) 2024-2026 Thi Thanh Chuong`.
+2. **Dẫn link nguồn gốc:** Ghi chú và đính kèm đường dẫn trích dẫn rõ ràng trỏ về repository gốc của tác giả.
+3. **Đính kèm giấy phép:** Giữ nguyên các tệp giấy phép `LICENSE`, `LICENSE-MIT`, và `LICENSE-APACHE`.
+
+### ⚖️ Tuyên Bố Từ Chối Trách Nhiệm (Disclaimer)
+
+- Nội dung câu hỏi, đáp án và hình ảnh biển báo/sa hình được tổng hợp từ các tài liệu học và sát hạch công khai của Cục Cảnh sát giao thông & Cục Đường bộ Việt Nam (Bộ Giao thông Vận tải).
+- Phần mềm này được xây dựng độc lập phục vụ mục đích học tập và ôn tập cộng đồng, không đại diện và không liên kết trực tiếp với bất kỳ cơ quan chính phủ nào.
+
 

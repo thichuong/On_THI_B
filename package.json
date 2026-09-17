@@ -3,6 +3,8 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "author": "Thi Thanh Chuong <thichuong22022000@gmail.com>",
+  "license": "MIT OR Apache-2.0",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",

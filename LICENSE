@@ -1,0 +1,24 @@
+Dự án này được cấp phép theo cơ chế giấy phép kép (Dual-Licensed) dưới một trong hai giấy phép tùy chọn:
+
+- **MIT License** ([LICENSE-MIT](LICENSE-MIT))
+- **Apache License, Version 2.0** ([LICENSE-APACHE](LICENSE-APACHE))
+
+Tác giả giữ bản quyền:
+**Copyright (c) 2024-2026 Thi Thanh Chuong <thichuong22022000@gmail.com>**
+
+---
+
+### Điều kiện ghi nhận bản quyền & trích dẫn nguồn (Attribution Requirement)
+
+Khi bạn sao chép (clone), tạo nhánh (fork), phân phối lại hoặc sử dụng lại mã nguồn này trong bất kỳ dự án nào (cả phi thương mại hoặc thương mại), theo quy định của giấy phép **MIT** và **Apache 2.0**, bạn **BẮT BUỘC** phải:
+
+1. **Ghi rõ tên tác giả:** Giữ nguyên thông báo bản quyền `Copyright (c) 2024-2026 Thi Thanh Chuong`.
+2. **Dẫn nguồn rõ ràng:** Đính kèm liên kết (link) trích dẫn về kho lưu trữ gốc (repository) của dự án.
+3. **Đính kèm giấy phép:** Giữ nguyên toàn văn nội dung tệp giấy phép đi kèm mã nguồn.
+
+---
+
+### Tuyên bố từ chối trách nhiệm (Disclaimer)
+
+Nội dung 600 câu hỏi sát hạch, đáp án và biển báo giao thông được tổng hợp từ các văn bản, quy chuẩn và tài liệu công khai của Cục Cảnh sát giao thông & Cục Đường bộ Việt Nam (Bộ GTVT). Phần mềm này được phát triển hoàn toàn độc lập nhằm mục đích giáo dục, hỗ trợ cộng đồng ôn thi sát hạch GPLX, không đại diện và không trực thuộc bất kỳ cơ quan nhà nước nào.
+

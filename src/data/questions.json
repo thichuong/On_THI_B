@@ -8049,7 +8049,7 @@
     ],
     "correct_option": 3,
     "is_critical": false,
-    "explanation": "Xét quy tắc ưu tiên tại nơi đường giao nhau cùng cấp:\n- Xe con rẽ trái: Do hướng rẽ trái nên bên phải của xe con lúc này là xe khách (phải nhường cho xe đi thẳng).\n- Xe khách đi thẳng: Phía bên phải của xe khách vướng xe tải (phải nhường cho xe tải).\n- Xe tải rẽ phải: Phía bên phải xe tải không vướng xe nào (bên phải trống) nên xe tải được ưu tiên đi đầu tiên (thứ 1).\n- Sau khi xe tải đi, bên phải xe khách đã trống -> Xe khách đi thẳng (thứ 2).\n- Xe con hoàn tất rẽ trái đi sau cùng (thứ 3).\nThứ tự đúng: Xe tải -> Xe khách -> Xe con."
+    "explanation": "Phân tích biển báo và quy tắc nhường đường tại nơi giao nhau:\n- Biển báo: Nơi giao nhau có cắm biển W.205 'Giao nhau giữa các đường cùng cấp' (tam giác viền đỏ nền vàng hình chữ T), do đó các tuyến đường có quyền ưu tiên ngang nhau.\n- Quy tắc hướng đi ưu tiên: Xe rẽ phải -> Xe đi thẳng -> Xe rẽ trái:\n  + Xe tải rẽ phải: Hướng rẽ phải được ưu tiên đi đầu tiên (không xung đột cắt ngang luồng xe khác).\n  + Xe khách và Xe con cùng lưu thông đối diện nhau trên cùng một con đường: Xe con rẽ trái (chuyển hướng) bắt buộc phải nhường đường cho xe khách đi thẳng. Do đó xe khách đi thứ 2.\n  + Xe con rẽ trái: Nhường cho xe khách đi thẳng xong mới được rẽ, nên đi sau cùng (thứ 3).\nThứ tự đúng: Xe tải -> Xe khách -> Xe con."
   },
   {
     "id": 534,
@@ -8064,7 +8064,7 @@
     ],
     "correct_option": 1,
     "is_critical": false,
-    "explanation": "Phân tích hướng đi của các xe trên đường ưu tiên:\n- Cả xe khách và xe tải đều gặp biển W.207 'Giao nhau với đường không ưu tiên' (đang cùng nằm trên trục đường ưu tiên).\n- Xe khách đi thẳng và xe tải đi thẳng theo hai chiều riêng biệt, hướng đi của hai xe không xung đột hay giao cắt nhau nên được ĐI ĐỒNG THỜI.\n- Xe con ở đường nhánh không ưu tiên rẽ trái đi sau cùng.\nThứ tự đúng: Xe khách và xe tải, xe con."
+    "explanation": "Phân tích biển báo và quy tắc hướng đi ưu tiên (Rẽ phải -> Đi thẳng -> Rẽ trái):\n- Biển báo: Nơi giao nhau có cắm biển W.205 'Giao nhau giữa các đường cùng cấp', do đó các tuyến đường có quyền ưu tiên ngang nhau.\n- Xét hướng đi của các xe:\n  + Cả xe khách và xe tải đều rẽ phải: Hướng rẽ phải được ưu tiên đi trước. Quỹ đạo rẽ phải của hai xe không giao cắt xung đột nhau nên xe khách và xe tải được ĐI ĐỒNG THỜI (thứ 1).\n  + Xe con rẽ trái: Thuộc hướng ưu tiên sau cùng nên phải nhường đường và đi sau cùng (thứ 2).\nThứ tự đúng: Xe khách và xe tải, xe con."
   },
   {
     "id": 535,

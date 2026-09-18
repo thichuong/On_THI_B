@@ -139,6 +139,15 @@ class DBService {
         } catch {}
       }
 
+      // 5. Migrate critical progress
+      const rawCriticalProg = localStorage.getItem('gplx_critical_progress');
+      if (rawCriticalProg) {
+        try {
+          const parsedProg = JSON.parse(rawCriticalProg);
+          await this.setMeta('critical_progress', parsedProg);
+        } catch {}
+      }
+
       await this.setMeta('localStorage_migrated', true);
       console.log('IndexedDB: Successfully migrated data from localStorage.');
     } catch (e) {

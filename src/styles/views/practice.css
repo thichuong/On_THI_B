@@ -186,3 +186,26 @@
   color: var(--text-muted);
 }
 
+/* ==========================================================================
+   CRITICAL QUESTIONS PROGRESS STYLES
+   ========================================================================== */
+
+.critical-progress-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-left: 4px solid #ef4444;
+  border-radius: var(--radius-lg);
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  box-shadow: 0 2px 10px rgba(239, 68, 68, 0.08);
+}
+
+[data-theme="light"] .critical-progress-card {
+  background: #ffffff;
+  border-color: rgba(239, 68, 68, 0.3);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.06);
+}
+

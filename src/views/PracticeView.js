@@ -7,6 +7,7 @@ import { questionService } from '../services/questionService.js';
 import { StorageService } from '../services/storageService.js';
 import { QuestionCard } from '../components/QuestionCard.js';
 import { QuestionPalette } from '../components/QuestionPalette.js';
+import { confirmModal } from '../components/ConfirmModal.js';
 import { $, scrollToQuestion } from '../utils/dom.js';
 
 export class PracticeView extends BaseView {
@@ -23,25 +24,42 @@ export class PracticeView extends BaseView {
 
   mount(container) {
     this.container = container;
-    this.loadQuestions();
+    this.loadQuestions(true);
     this.render();
   }
 
-  loadQuestions() {
+  loadQuestions(initial = false) {
     if (this.mode === 'critical') {
       this.questions = questionService.getCriticalQuestions();
+      const prog = StorageService.getCriticalProgress();
+      const safeIndex = Math.min(prog.lastIndex || 0, Math.max(0, this.questions.length - 1));
+      store.setState({
+        currentPracticeIndex: safeIndex,
+        practiceAnswers: { ...(prog.answers || {}) }
+      });
     } else if (this.mode === 'mistakes') {
       const wrongMap = StorageService.getWrongQuestions();
       const wrongIds = Object.keys(wrongMap).map(Number);
       this.questions = questionService.getByIds(wrongIds);
+      if (initial) {
+        store.setState({ currentPracticeIndex: 0, practiceAnswers: {} });
+      } else {
+        const state = store.getState();
+        if (state.currentPracticeIndex >= this.questions.length) {
+          store.setState({ currentPracticeIndex: Math.max(0, this.questions.length - 1) });
+        }
+      }
     } else if (this.mode === 'bookmarks') {
       const bookmarkIds = StorageService.getBookmarks();
       this.questions = questionService.getByIds(bookmarkIds);
-    }
-
-    const state = store.getState();
-    if (state.currentPracticeIndex >= this.questions.length) {
-      store.setState({ currentPracticeIndex: 0 });
+      if (initial) {
+        store.setState({ currentPracticeIndex: 0, practiceAnswers: {} });
+      } else {
+        const state = store.getState();
+        if (state.currentPracticeIndex >= this.questions.length) {
+          store.setState({ currentPracticeIndex: Math.max(0, this.questions.length - 1) });
+        }
+      }
     }
   }
 
@@ -60,6 +78,48 @@ export class PracticeView extends BaseView {
     const q = this.questions[curIndex];
     const userAnswer = state.practiceAnswers[q.id];
     const totalQuestions = this.questions.length;
+
+    // Critical progress statistics
+    let criticalStatsHtml = '';
+    if (this.mode === 'critical') {
+      const stats = StorageService.getCriticalStats(this.questions);
+      const correctPercent = totalQuestions > 0 ? (stats.correct / totalQuestions) * 100 : 0;
+      const wrongPercent = totalQuestions > 0 ? (stats.wrong / totalQuestions) * 100 : 0;
+
+      criticalStatsHtml = `
+        <div class="critical-progress-card">
+          <div class="chapter-progress-header">
+            <div class="chapter-progress-info">
+              <span>⚠️ Tiến độ 60 Câu Điểm Liệt:</span>
+              <span class="chapter-progress-percent" style="color: ${stats.wrong > 0 ? '#ef4444' : 'var(--accent-primary)'};">${stats.answered}/${totalQuestions} câu (${stats.percent}%)</span>
+            </div>
+            <button id="btn-reset-critical" class="btn-reset-chapter" ${stats.answered === 0 ? 'disabled' : ''} title="Đặt lại toàn bộ câu trả lời của 60 câu điểm liệt">
+              <span>🔄 Làm lại 60 câu</span>
+            </button>
+          </div>
+
+          <div class="chapter-progress-bar-track" role="progressbar" aria-valuenow="${stats.percent}" aria-valuemin="0" aria-valuemax="100">
+            <div class="chapter-progress-fill correct" style="width: ${correctPercent}%;" title="${stats.correct} câu đúng"></div>
+            <div class="chapter-progress-fill wrong" style="width: ${wrongPercent}%;" title="${stats.wrong} câu sai"></div>
+          </div>
+
+          <div class="chapter-progress-stats">
+            <span class="chapter-stat-badge correct">🟢 ${stats.correct} câu đúng</span>
+            <span>•</span>
+            <span class="chapter-stat-badge wrong" style="${stats.wrong > 0 ? 'font-weight: 700; color: #ef4444;' : ''}">🔴 ${stats.wrong} câu sai ${stats.wrong > 0 ? '(nguy cơ trượt)' : ''}</span>
+            <span>•</span>
+            <span class="chapter-stat-badge remaining">⚪ ${stats.remaining} câu chưa làm</span>
+          </div>
+
+          ${stats.isAllCorrect ? `
+            <div class="critical-success-banner" style="margin-top: 0.35rem; padding: 0.5rem 0.85rem; border-radius: var(--radius-md); background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); color: #10b981; font-size: 0.875rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+              <span>🎉</span>
+              <span>Xuất sắc! Bạn đã trả lời đúng toàn bộ 60/60 câu điểm liệt. Hãy tự tin khi bước vào kỳ thi thật!</span>
+            </div>
+          ` : ''}
+        </div>
+      `;
+    }
 
     const questionCardHtml = QuestionCard.render({
       question: q,
@@ -80,6 +140,7 @@ export class PracticeView extends BaseView {
     });
 
     this.container.innerHTML = `
+      ${criticalStatsHtml}
       ${this.mode === 'mistakes' ? `
         <div class="mistakes-header-actions" style="margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; background: var(--bg-card); padding: 0.85rem 1.25rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
           <div>
@@ -95,7 +156,7 @@ export class PracticeView extends BaseView {
           </button>
         </div>
       ` : ''}
-      <div class="exam-layout">
+      <div class="exam-layout" style="${this.mode === 'critical' ? 'margin-top: 1rem;' : ''}">
         <div id="question-card-wrapper">
           ${questionCardHtml}
         </div>
@@ -131,6 +192,23 @@ export class PracticeView extends BaseView {
   bindEvents(currentQuestion, savedScrollTop) {
     const state = store.getState();
 
+    // Critical progress reset button
+    if (this.mode === 'critical') {
+      $('#btn-reset-critical', this.container)?.addEventListener('click', () => {
+        const stats = StorageService.getCriticalStats(this.questions);
+        confirmModal.showConfirmation({
+          title: 'Làm lại 60 câu điểm liệt?',
+          message: `Toàn bộ ${stats.answered} câu đã làm trong phần 60 câu hỏi điểm liệt sẽ được xóa để bạn ôn tập lại từ đầu. Dữ liệu câu sai chung sẽ không bị ảnh hưởng.`,
+          icon: '🔄',
+          confirmText: 'Xác Nhận Làm Lại',
+          cancelText: 'Giữ Lại',
+          onConfirm: () => {
+            this.resetCritical();
+          }
+        });
+      });
+    }
+
     // QuestionCard events
     QuestionCard.bindEvents(this.container, {
       onSelectOption: (optNum) => this.selectOption(optNum),
@@ -148,6 +226,9 @@ export class PracticeView extends BaseView {
     // Palette events
     QuestionPalette.bindEvents(this.container, (idx) => {
       store.setState({ currentPracticeIndex: idx });
+      if (this.mode === 'critical') {
+        StorageService.saveCriticalLastIndex(idx);
+      }
       this.render();
       scrollToQuestion();
     });
@@ -172,6 +253,10 @@ export class PracticeView extends BaseView {
     const newPracticeAnswers = { ...state.practiceAnswers, [q.id]: optNum };
     store.setState({ practiceAnswers: newPracticeAnswers });
 
+    if (this.mode === 'critical') {
+      StorageService.saveCriticalAnswer(q.id, optNum, curIndex);
+    }
+
     if (optNum !== Number(q.correct_option)) {
       StorageService.recordWrongQuestion(q.id);
     } else {
@@ -187,13 +272,32 @@ export class PracticeView extends BaseView {
     delete newAnswers[questionId];
 
     store.setState({ practiceAnswers: newAnswers });
+
+    if (this.mode === 'critical') {
+      StorageService.removeCriticalAnswer(questionId);
+    }
+
     this.render();
+  }
+
+  resetCritical() {
+    StorageService.resetCriticalProgress();
+    store.setState({
+      practiceAnswers: {},
+      currentPracticeIndex: 0
+    });
+    this.render();
+    scrollToQuestion();
   }
 
   prevQuestion() {
     const state = store.getState();
     if (state.currentPracticeIndex > 0) {
-      store.setState({ currentPracticeIndex: state.currentPracticeIndex - 1 });
+      const newIndex = state.currentPracticeIndex - 1;
+      store.setState({ currentPracticeIndex: newIndex });
+      if (this.mode === 'critical') {
+        StorageService.saveCriticalLastIndex(newIndex);
+      }
       this.render();
       scrollToQuestion();
     }
@@ -202,7 +306,11 @@ export class PracticeView extends BaseView {
   nextQuestion() {
     const state = store.getState();
     if (state.currentPracticeIndex < this.questions.length - 1) {
-      store.setState({ currentPracticeIndex: state.currentPracticeIndex + 1 });
+      const newIndex = state.currentPracticeIndex + 1;
+      store.setState({ currentPracticeIndex: newIndex });
+      if (this.mode === 'critical') {
+        StorageService.saveCriticalLastIndex(newIndex);
+      }
       this.render();
       scrollToQuestion();
     }

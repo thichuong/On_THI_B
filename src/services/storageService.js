@@ -14,7 +14,8 @@ const STORAGE_KEYS = {
   SETTINGS: 'gplx_settings',
   SEEN_STANDARD: 'gplx_seen_standard',
   SEEN_QUICK: 'gplx_seen_quick',
-  CHAPTER_PROGRESS: 'gplx_chapter_progress'
+  CHAPTER_PROGRESS: 'gplx_chapter_progress',
+  CRITICAL_PROGRESS: 'gplx_critical_progress'
 };
 
 class StorageServiceImpl {
@@ -27,7 +28,8 @@ class StorageServiceImpl {
       wrongQuestions: null,
       seenStandard: null,
       seenQuick: null,
-      chapterProgress: null
+      chapterProgress: null,
+      criticalProgress: null
     };
   }
 
@@ -42,10 +44,11 @@ class StorageServiceImpl {
         await dbService.init();
 
         // Hydrate seen cycles from IndexedDB if available
-        const [stdCycle, qkCycle, idbChapterProg] = await Promise.all([
+        const [stdCycle, qkCycle, idbChapterProg, idbCriticalProg] = await Promise.all([
           dbService.getExamCycle('standard'),
           dbService.getExamCycle('quick'),
-          dbService.getMeta('chapter_progress')
+          dbService.getMeta('chapter_progress'),
+          dbService.getMeta('critical_progress')
         ]);
 
         if (Array.isArray(stdCycle) && stdCycle.length > 0) {
@@ -62,6 +65,12 @@ class StorageServiceImpl {
         if (idbChapterProg && !localStorage.getItem(STORAGE_KEYS.CHAPTER_PROGRESS)) {
           this._cache.chapterProgress = idbChapterProg;
           localStorage.setItem(STORAGE_KEYS.CHAPTER_PROGRESS, JSON.stringify(idbChapterProg));
+        }
+
+        // Hydrate critical progress from IndexedDB if localStorage does not have it
+        if (idbCriticalProg && !localStorage.getItem(STORAGE_KEYS.CRITICAL_PROGRESS)) {
+          this._cache.criticalProgress = idbCriticalProg;
+          localStorage.setItem(STORAGE_KEYS.CRITICAL_PROGRESS, JSON.stringify(idbCriticalProg));
         }
 
         this._initialized = true;
@@ -529,6 +538,161 @@ class StorageServiceImpl {
       wrong,
       remaining,
       percent
+    };
+  }
+
+  // --- Critical Questions Progress ---
+
+  _getDefaultCriticalProgress() {
+    return {
+      lastIndex: 0,
+      answers: {},
+      updatedAt: null
+    };
+  }
+
+  getCriticalProgress() {
+    if (this._cache.criticalProgress) return this._cache.criticalProgress;
+
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.CRITICAL_PROGRESS);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+          const def = this._getDefaultCriticalProgress();
+          const merged = {
+            lastIndex: Math.max(0, Number(parsed.lastIndex) || 0),
+            answers: (parsed.answers && typeof parsed.answers === 'object') ? parsed.answers : {},
+            updatedAt: parsed.updatedAt || null
+          };
+          this._cache.criticalProgress = merged;
+          return merged;
+        }
+      }
+    } catch {
+      // Fallback to default
+    }
+
+    const defaultProg = this._getDefaultCriticalProgress();
+    this._cache.criticalProgress = defaultProg;
+    return defaultProg;
+  }
+
+  saveCriticalProgress(data = {}) {
+    const current = this.getCriticalProgress();
+    const updated = {
+      ...current,
+      ...data,
+      updatedAt: new Date().toISOString()
+    };
+
+    this._cache.criticalProgress = updated;
+    localStorage.setItem(STORAGE_KEYS.CRITICAL_PROGRESS, JSON.stringify(updated));
+    dbService.setMeta('critical_progress', updated).catch(() => {});
+    eventBus.emit('criticalProgress:updated', { progress: updated });
+    return updated;
+  }
+
+  saveCriticalAnswer(questionId, selectedOption, index = null) {
+    const qid = Number(questionId);
+    const opt = Number(selectedOption);
+
+    const current = this.getCriticalProgress();
+    const updatedAnswers = { ...(current.answers || {}), [qid]: opt };
+
+    const updated = {
+      ...current,
+      answers: updatedAnswers,
+      lastIndex: index !== null ? Math.max(0, Number(index)) : (current.lastIndex || 0),
+      updatedAt: new Date().toISOString()
+    };
+
+    this._cache.criticalProgress = updated;
+    localStorage.setItem(STORAGE_KEYS.CRITICAL_PROGRESS, JSON.stringify(updated));
+    dbService.setMeta('critical_progress', updated).catch(() => {});
+    eventBus.emit('criticalProgress:updated', { questionId: qid, selectedOption: opt, progress: updated });
+  }
+
+  removeCriticalAnswer(questionId) {
+    const qid = Number(questionId);
+    const current = this.getCriticalProgress();
+    const updatedAnswers = { ...(current.answers || {}) };
+    delete updatedAnswers[qid];
+
+    const updated = {
+      ...current,
+      answers: updatedAnswers,
+      updatedAt: new Date().toISOString()
+    };
+
+    this._cache.criticalProgress = updated;
+    localStorage.setItem(STORAGE_KEYS.CRITICAL_PROGRESS, JSON.stringify(updated));
+    dbService.setMeta('critical_progress', updated).catch(() => {});
+    eventBus.emit('criticalProgress:updated', { questionId: qid, removed: true, progress: updated });
+  }
+
+  saveCriticalLastIndex(index) {
+    const current = this.getCriticalProgress();
+    const updated = {
+      ...current,
+      lastIndex: Math.max(0, Number(index)),
+      updatedAt: new Date().toISOString()
+    };
+
+    this._cache.criticalProgress = updated;
+    localStorage.setItem(STORAGE_KEYS.CRITICAL_PROGRESS, JSON.stringify(updated));
+    dbService.setMeta('critical_progress', updated).catch(() => {});
+  }
+
+  resetCriticalProgress() {
+    const def = this._getDefaultCriticalProgress();
+    def.updatedAt = new Date().toISOString();
+
+    this._cache.criticalProgress = def;
+    localStorage.setItem(STORAGE_KEYS.CRITICAL_PROGRESS, JSON.stringify(def));
+    dbService.setMeta('critical_progress', def).catch(() => {});
+    eventBus.emit('criticalProgress:reset');
+  }
+
+  getCriticalStats(questions = []) {
+    const prog = this.getCriticalProgress();
+    const answers = prog.answers || {};
+
+    const qList = questions && questions.length > 0
+      ? questions
+      : questionService.getCriticalQuestions();
+
+    const total = qList.length;
+    let answered = 0;
+    let correct = 0;
+    let wrong = 0;
+
+    qList.forEach(q => {
+      const userAns = answers[q.id];
+      if (userAns !== undefined && userAns !== null) {
+        answered++;
+        if (Number(userAns) === Number(q.correct_option)) {
+          correct++;
+        } else {
+          wrong++;
+        }
+      }
+    });
+
+    const percent = total > 0 ? Math.round((answered / total) * 100) : 0;
+    const remaining = Math.max(0, total - answered);
+    const isCompleted = total > 0 && answered === total;
+    const isAllCorrect = total > 0 && correct === total;
+
+    return {
+      total,
+      answered,
+      correct,
+      wrong,
+      remaining,
+      percent,
+      isCompleted,
+      isAllCorrect
     };
   }
 }

@@ -8410,7 +8410,7 @@
     ],
     "correct_option": 3,
     "is_critical": false,
-    "explanation": "Phân tích phạm vi hiệu lực của biển cấm dừng đỗ kết hợp biển phụ:\n- Biển chính là biển P.130 'Cấm dừng xe và đỗ xe'.\n- Biển phụ S.508a đặt bên dưới có hình mũi tên chỉ về phía sau lưng biển (hướng xuống), biểu thị biển chỉ có hiệu lực CẤM Ở PHÍA SAU MẶT BIỂN (vị trí A).\n- Vị trí B và C nằm ở phía trước mặt biển, không thuộc phạm vi hiệu lực của biển cấm.\nDo đó người lái xe dừng đúng tại: Vị trí B và C."
+    "explanation": "Phân tích quy định về dừng xe và ý nghĩa biển báo:\n- Biển báo trên đường là biển P.131a 'Cấm đỗ xe' (chỉ cấm đỗ xe, không cấm dừng xe). Vì vậy, người lái xe hoàn toàn ĐƯỢC PHÉP DỪNG XE tại vị trí B và C ở lề đường bên phải theo chiều đi.\n- Vị trí A nằm ở lề đường bên trái: Theo quy tắc giao thông đường bộ, người điều khiển phương tiện phải dừng xe sát mép đường bên phải theo chiều đi của mình. Dừng xe ở vị trí A là dừng ngược chiều lưu thông, vi phạm quy tắc giao thông.\nDo đó, người lái xe dừng đúng quy tắc giao thông tại: Vị trí B và C."
   },
   {
     "id": 558,
@@ -8551,7 +8551,7 @@
     ],
     "correct_option": 3,
     "is_critical": false,
-    "explanation": "Đối chiếu biển phân làn trên giá long môn với vị trí các xe:\n- Làn 1 (trái cùng): Làn dành cho xe ô tô tải và khách -> Xe con (B) đi vào làn này là SAI LÀN.\n- Làn 2: Làn dành cho xe ô tô con -> Xe con (A) đi đúng.\n- Làn 3: Làn dành cho xe ô tô con -> Xe con (C) và xe con (E) đi đúng.\n- Làn 4 (phải cùng): Làn dành cho xe mô tô -> Xe tải (D) đi vào làn mô tô là SAI LÀN.\nVậy hai xe vi phạm quy tắc giao thông là: Xe tải (D), xe con (B)."
+    "explanation": "Quan sát vị trí các xe chạy so với vạch kẻ đường trên hình:\n- Xe con (B) và Xe tải (D) vi phạm vì chạy đè lên vạch kẻ đường: Xe con (B) chạy đè lên vạch tim đường đôi màu vàng; Xe tải (D) chạy đè lên vạch liền màu trắng phân làn (vạch giới hạn làn đường dành cho xe buýt).\n- Các xe còn lại gồm Xe con (A), Xe con (C), Xe con (E) và Xe buýt (G) đều đi đúng trong làn đường quy định, không đè vạch.\nDo đó, những xe vi phạm quy tắc giao thông là: Xe tải ( D), xe con (B)."
   },
   {
     "id": 567,
@@ -8566,7 +8566,7 @@
     ],
     "correct_option": 3,
     "is_critical": false,
-    "explanation": "Phân tích biển báo ưu tiên tại ngã ba:\n- Phía trước xe của bạn có cắm biển tam giác ngược W.208 'Giao nhau với đường ưu tiên' kèm biển phụ S.506b thể hiện hướng đường ưu tiên bẻ cong từ nhánh xe mô tô sang nhánh đối diện. Xe của bạn đang ở đường không ưu tiên nên PHẢI ĐI CUỐI CÙNG.\n- Xe mô tô nằm trên trục đường ưu tiên, rẽ trái theo hướng đường ưu tiên nên được đi đầu tiên.\n- Xe con đi thẳng qua ngã ba đi thứ 2.\nThứ tự đúng: Xe mô tô -> Xe con -> Xe của bạn."
+    "explanation": "Phân tích quyền ưu tiên tại ngã ba theo biển báo và quy tắc giao thông:\n1. Xe mô tô: Nằm trên đường ưu tiên (theo biển phụ S.506b thể hiện hướng đường ưu tiên bẻ sang nhánh mô tô) nên được quyền đi đầu tiên.\n2. Xe con và Xe của bạn: Sau khi mô tô đi, cả hai xe đều ở trên đường không ưu tiên (trước mặt xe bạn có biển tam giác ngược W.208 'Giao nhau với đường ưu tiên'). Xét quy tắc nhường đường, xe con có hướng bên phải trống (không vướng xe) nên được đi trước xe của bạn.\n3. Xe của bạn: Nằm ở đường không ưu tiên và hướng bên phải vướng xe con nên phải đi sau cùng.\nThứ tự đúng: Xe mô tô -> Xe con -> Xe của bạn."
   },
   {
     "id": 568,
@@ -8581,7 +8581,7 @@
     ],
     "correct_option": 2,
     "is_critical": false,
-    "explanation": "Áp dụng quy tắc ngã ba đồng cấp (không có biển báo, không có xe ưu tiên):\nÁp dụng quy tắc 'Bên phải không vướng' và hướng đi ưu tiên:\n1. Xe con màu xanh tím bên phải rẽ phải (hướng bên phải không vướng xe nào) -> Được quyền đi đầu tiên.\n2. Sau khi xe con đã đi qua, hướng bên phải của xe bạn hoàn toàn trống -> Xe của bạn đi thẳng đi thứ 2.\n3. Xe mô tô rẽ trái đi sau cùng (thứ 3).\nThứ tự đúng: Xe con -> Xe của bạn -> Xe mô tô."
+    "explanation": "Áp dụng quy tắc ngã ba đồng cấp (không có biển báo, không có xe ưu tiên):\n1. Xe con (màu xanh tím): Rẽ phải và phía bên phải không vướng xe nào -> Được quyền đi đầu tiên.\n2. Xe của bạn và Xe mô tô: Cùng đi trên một trục đường đối diện nhau. Dù xe mô tô có bên phải không vướng, nhưng xe mô tô rẽ trái nên không được phép cắt mặt xe cùng đường đang đi thẳng (xe của bạn). Theo quy tắc ưu tiên hướng đi (Đi thẳng > Rẽ trái), xe của bạn được đi thứ 2.\n3. Xe mô tô: Rẽ trái cắt mặt xe đi thẳng cùng đường nên phải nhường đường và đi sau cùng.\nThứ tự đúng: Xe con -> Xe của bạn -> Xe mô tô."
   },
   {
     "id": 569,
@@ -8672,7 +8672,7 @@
     ],
     "correct_option": 3,
     "is_critical": false,
-    "explanation": "Áp dụng quy tắc hướng rẽ ưu tiên tại ngã tư đồng cấp:\n- Xe của bạn chuẩn bị rẽ trái tại ngã tư.\n- Phía đối diện có người đi xe đạp đi thẳng và xe ô tô khách rẽ phải.\n- Theo quy tắc hướng đi ưu tiên ('Phải > Thẳng > Trái'): Xe rẽ phải (xe khách) và xe đi thẳng (xe đạp) đều có quyền đi trước xe rẽ trái (xe bạn).\nDo đó bạn phải: Nhường đường cho xe đạp và xe khách."
+    "explanation": "Phân tích biển báo giao thông và quy tắc nhường đường:\n- Phía trước xe của bạn có cắm biển hiệu lệnh R.122 'STOP' (Dừng lại). Khi gặp biển này, người điều khiển phương tiện bắt buộc phải dừng lại trước vạch dừng xe, chú ý quan sát và nhường đường cho các xe trên đường giao nhau.\n- Do đó, bạn phải dừng lại nhường cho xe đạp và xe khách đi qua trước khi an toàn mới được tiếp tục di chuyển.\nCách xử lý đúng: Nhường đường cho xe đạp và xe khách."
   },
   {
     "id": 575,
@@ -8701,7 +8701,7 @@
     ],
     "correct_option": 2,
     "is_critical": false,
-    "explanation": "Quy tắc tránh nhau nơi có chướng ngại vật:\n- Luật Giao thông đường bộ quy định: 'Nơi đường hẹp hoặc có chướng ngại vật, xe có chướng ngại vật phía trước phải nhường đường cho xe không có chướng ngại vật đi trước'.\n- Phía trước làn đường của xe bạn có rào chắn thi công công trường (chướng ngại vật).\n- Xe đi ngược chiều đang lưu thông thuận lợi trên làn đường thông suốt.\nDo đó XE CỦA BẠN PHẢI NHƯỜNG ĐƯỜNG cho xe ngược chiều đi qua trước."
+    "explanation": "Quy tắc tránh nhau nơi có chướng ngại vật:\n- Luật Giao thông đường bộ quy định: 'Nơi đường hẹp hoặc có chướng ngại vật, xe có chướng ngại vật phía trước phải nhường đường cho xe không có chướng ngại vật đi trước'.\n- Phía trước làn đường của xe bạn có xe ô tô đang đỗ (là chướng ngại vật), trong khi xe đi ngược chiều đang lưu thông trên làn đường thông suốt không có vật cản.\nDo đó XE CỦA BẠN PHẢI NHƯỜNG ĐƯỜNG cho xe đi ngược chiều đi qua trước."
   },
   {
     "id": 577,
@@ -8806,7 +8806,7 @@
     ],
     "correct_option": 3,
     "is_critical": false,
-    "explanation": "Áp dụng quy tắc hướng đi ưu tiên tại ngã ba đồng cấp:\n- Ngã ba cùng cấp không có biển báo hiệu, áp dụng thứ tự ưu tiên hướng đi ('Phải > Thẳng > Trái'):\n  1. Người đi xe đạp rẽ phải -> Được đi đầu tiên.\n  2. Xe mô tô đi thẳng -> Được đi thứ 2.\n  3. Xe của bạn rẽ trái (bật đèn xi-nhan trái) -> Đi sau cùng (thứ 3).\nThứ tự đúng: Xe đạp -> Xe mô tô -> Xe của bạn."
+    "explanation": "Áp dụng quy tắc qua nơi đường giao nhau đồng cấp:\n- Tại ngã tư cùng cấp (không có biển báo, không có xe ưu tiên), áp dụng quy tắc xe có bên phải không vướng (bên phải trống) được đi trước:\n  1. Người đi xe đạp: Phía bên phải hoàn toàn trống (không vướng xe) và rẽ phải nên được quyền đi đầu tiên.\n  2. Xe mô tô: Sau khi xe đạp đi qua, hướng bên phải của xe mô tô không còn vướng xe nên được đi tiếp theo (thứ 2).\n  3. Xe của bạn: Hướng bên phải vướng xe mô tô và đang rẽ trái (bật đèn xi-nhan trái) nên phải nhường đường đi sau cùng (thứ 3).\nThứ tự đúng: Xe đạp -> Xe mô tô -> Xe của bạn."
   },
   {
     "id": 584,
@@ -8822,7 +8822,7 @@
     ],
     "correct_option": 4,
     "is_critical": false,
-    "explanation": "Phân tích biển báo ưu tiên và hướng đi của xe:\n- Trước mặt xe của bạn có cắm biển hình thoi I.401 'Bắt đầu đường ưu tiên' kèm biển phụ S.506b thể hiện đường ưu tiên rẽ trái. Xe của bạn bật xi-nhan rẽ trái đi theo đúng hướng đường ưu tiên nên ĐƯỢC QUYỀN ĐI ĐẦU TIÊN (thứ 1).\n- Giữa xe con và xe tải: Xe con rẽ phải đi thứ 2; xe tải ở đường không ưu tiên đi sau cùng (thứ 3).\nThứ tự đúng: Xe của bạn -> Xe con -> Xe tải."
+    "explanation": "Phân tích biển báo ưu tiên và quy tắc nhường đường tại nơi giao nhau:\n1. Xe của bạn: Trước mặt có cắm biển hình thoi I.401 'Bắt đầu đường ưu tiên' kèm biển phụ S.506b thể hiện hướng đường ưu tiên rẽ trái. Xe của bạn bật xi-nhan rẽ trái đi theo đúng hướng đường ưu tiên nên ĐƯỢC ĐI ĐẦU TIÊN (thứ 1).\n2. Xe con và Xe tải: Cả hai xe đều ở trên đường không ưu tiên. Xe con đi thẳng và có phía bên phải hoàn toàn trống nên được quyền đi trước xe tải (thứ 2).\n3. Xe tải: Rẽ trái và phía bên phải vướng xe con nên phải nhường đường đi sau cùng (thứ 3).\nThứ tự đúng: Xe của bạn -> Xe con -> Xe tải."
   },
   {
     "id": 585,
@@ -8909,7 +8909,7 @@
     ],
     "correct_option": 3,
     "is_critical": false,
-    "explanation": "Kỹ năng xử lý an toàn khi gặp xe ngược chiều và người đi xe đạp cùng chiều:\n- Phía trước có xe ô tô ngược chiều đang tiến tới và có người đi xe đạp cùng chiều bên phải.\n- Mặt đường hẹp không đủ điều kiện để lấn làn vượt xe đạp mà không đối đầu với xe ngược chiều.\n- Biện pháp an toàn duy nhất: Giảm tốc độ, không lấn làn, đi nối đuôi sát về phần đường bên phải phía sau xe đạp cho đến khi xe ngược chiều đi qua an toàn.\nĐáp án đúng: Giảm tốc độ cho xe đi sát phần đường bên phải."
+    "explanation": "Kỹ năng lái xe an toàn khi vào đoạn đường cong:\n- Xe đang chạy trong đoạn đường cong cua, tầm nhìn hẹp (bị che khuất) và có vạch tim đường nét liền cấm lấn làn.\n- Quan sát gương chiếu hậu thấy phía sau đang có xe bám theo.\n- Tại đoạn đường cong tầm nhìn bị hạn chế, người lái xe tuyệt đối không được tăng tốc hay lấn sang làn đường bên trái để tránh nguy hiểm đối đầu với xe đi ngược chiều.\nCách xử lý đúng: Giảm tốc độ cho xe đi sát phần đường bên phải."
   },
   {
     "id": 591,
@@ -9012,7 +9012,7 @@
     ],
     "correct_option": 2,
     "is_critical": false,
-    "explanation": "Quy tắc nhập làn đường cao tốc an toàn:\n- Khi nhập vào đường cao tốc, xe phải chạy trên làn đường tăng tốc đến khi đạt tốc độ lưu thông quy định, quan sát an toàn và nhường đường cho các xe đang chạy trên đường cao tốc rồi mới chuyển làn tại đoạn vạch nét đứt.\n- Trong hình, xe con màu đỏ nhập làn cắt xéo góc đè qua vạch xương cá (vạch kênh hóa dòng xe) và vạch liền, tạt đầu xe khác trên cao tốc là vi phạm nghiêm trọng quy tắc an toàn.\nĐáp án đúng: SAI."
+    "explanation": "Quy tắc nhập làn đường cao tốc an toàn:\n- Khi nhập vào đường cao tốc, xe phải chạy trên làn đường tăng tốc đến khi đạt tốc độ an toàn, chú ý quan sát và nhường đường cho các xe đang chạy trên đường cao tốc rồi mới chuyển làn tại nơi có vạch nét đứt.\n- Trong hình, xe con màu đỏ nhập làn cắt xéo góc đè lên vạch liền là vi phạm quy tắc giao thông đường bộ.\nĐáp án đúng: SAI."
   },
   {
     "id": 598,
@@ -9040,7 +9040,7 @@
     ],
     "correct_option": 1,
     "is_critical": false,
-    "explanation": "Phân tích vạch kẻ đường và hành vi vượt xe an toàn:\n- Vạch phân chia hai chiều xe chạy là VẠCH NÉT ĐỨT MÀU VÀNG (vạch 1.1), cho phép phương tiện đè vạch để vượt khi an toàn.\n- Xe con màu vàng đã bật đèn xi-nhan xin vượt, phía trước làn đối diện có xe ô tô màu xanh ở khoảng cách rất xa, bảo đảm an toàn.\nDo đó hành vi vượt của xe con màu vàng là ĐÚNG quy tắc giao thông."
+    "explanation": "Phân tích vạch kẻ đường và hành vi vượt xe an toàn:\n- Vạch phân chia hai chiều xe chạy là VẠCH NÉT ĐỨT MÀU VÀNG (vạch 1.1), cho phép phương tiện đè vạch mượn làn để vượt khi bảo đảm an toàn.\n- Xe con màu vàng đã bật đèn xi-nhan xin vượt; phía trước xe ô tô màu xanh ở cùng làn với khoảng cách rất xa, đủ điều kiện an toàn để vượt rồi quay lại làn đường.\nDo đó hành vi vượt của xe con màu vàng là ĐÚNG quy tắc giao thông."
   },
   {
     "id": 600,

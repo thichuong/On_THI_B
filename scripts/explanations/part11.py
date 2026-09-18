@@ -88,14 +88,14 @@ PART11_EXPLANATIONS = {
          "- Các xe còn lại gồm Xe con (A), Xe con (C), Xe con (E) và Xe buýt (G) đều đi đúng trong phần làn đường quy định, không đè vạch.\n"
          "Do đó các xe chấp hành đúng quy tắc giao thông là: Xe con (A), xe con (C), xe con (E), xe buýt (G).",
 
-    555: "Quy định cấm vượt xe tại nơi đường giao nhau:\n"
-         "- Luật Giao thông đường bộ quy định nghiêm cấm vượt xe tại 'Nơi đường giao nhau, đường bộ giao nhau cùng mức với đường sắt; nơi có phần đường dành cho người đi bộ qua đường'.\n"
-         "- Trong hình, phía trước là ngã ba có vạch người đi bộ và vạch tim đường nét liền, xe tải phía trước che khuất tầm nhìn.\n"
+    555: "Quy định cấm vượt xe theo Luật Giao thông đường bộ:\n"
+         "- Tại nơi đường giao nhau và trên đường có phần đường (làn) dành cho người đi bộ cắt qua thì nghiêm cấm vượt xe.\n"
+         "- Ngoài ra, tại đây còn có vạch tim đường nét liền màu vàng cấm lấn làn, đè vạch.\n"
          "Do đó người lái xe CẤM VƯỢT xe tải trong trường hợp này.",
 
-    556: "Quy định cấm vượt xe tại đoạn đường vòng cua nguy hiểm:\n"
-         "- Phía trước là đoạn đường cong cua gấp khuất tầm nhìn, có vạch tim đường là VẠCH ĐƠN NÉT LIỀN MÀU VÀNG (vạch 1.2 cấm đè vạch, cấm lấn làn).\n"
-         "- Việc vượt xe trên đường cong bị che khuất tầm nhìn tiềm ẩn nguy cơ đối đầu trực diện với xe ngược chiều.\n"
+    556: "Quy định cấm vượt xe theo Luật Giao thông đường bộ:\n"
+         "- Tại nơi đường giao nhau (có cắm biển W.208 giao nhau với đường ưu tiên) và trên đường có làn dành cho người đi bộ cắt qua thì nghiêm cấm vượt xe.\n"
+         "- Vượt xe tại nơi đường giao nhau và vạch đi bộ tiềm ẩn nguy cơ cao xảy ra va chạm và tai nạn giao thông.\n"
          "Do đó bạn KHÔNG ĐƯỢC VƯỢT xe mô tô phía trước.",
 
     557: "Phân tích phạm vi hiệu lực của biển cấm dừng đỗ kết hợp biển phụ:\n"

@@ -34,6 +34,26 @@ function initApp() {
 
   // Start with default mode (Standard Mock Exam)
   router.navigate('exam');
+
+  // Register PWA Service Worker for offline support
+  registerServiceWorker();
+}
+
+/**
+ * Register Service Worker for PWA & Offline caching
+ */
+function registerServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then((reg) => {
+          console.log('[PWA] Service Worker registered with scope:', reg.scope);
+        })
+        .catch((err) => {
+          console.warn('[PWA] Service Worker registration failed:', err);
+        });
+    });
+  }
 }
 
 // Kickstart on DOM load

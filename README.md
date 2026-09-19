@@ -39,9 +39,9 @@
   - Đánh dấu lưu các câu hỏi quan trọng cần xem lại bất cứ lúc nào.
   - Dữ liệu lưu trữ bền vững qua `localStorage`.
 
-- 📱 **Hỗ Trợ PWA & Học Offline Toàn Diện**:
-  - Hỗ trợ chuẩn **Progressive Web App (PWA)**: Có thể bấm "Thêm vào màn hình chính" (Add to Home Screen) trên iPhone, Android hoặc cài đặt như một ứng dụng Native trên Windows / macOS.
-  - Tích hợp **Service Worker Cache**: Tự động lưu cache toàn bộ câu hỏi, tài nguyên và hình ảnh sa hình để học và làm bài thi mượt mà ngay cả khi **không có kết nối mạng Internet**.
+- 📱 **Hỗ Trợ PWA (Cài Đặt Màn Hình Chính 1-Chạm)**:
+  - Hỗ trợ chuẩn **Progressive Web App (PWA)**: Có thể bấm "Thêm vào màn hình chính" (Add to Home Screen) trên iPhone, Android hoặc cài đặt như một ứng dụng Native độc lập trên Windows / macOS mà không cần thông qua cửa hàng ứng dụng.
+  - Tối ưu tải nhanh, mượt mà và không chiếm dụng nhiều bộ nhớ thiết bị.
 
 - 🌓 **Giao Diện Hiện Đại & Chế Độ Sáng/Tối (Dark/Light Theme)**:
   - Phong cách thiết kế hiện đại, tinh tế, mượt mà trên cả máy tính và điện thoại.
